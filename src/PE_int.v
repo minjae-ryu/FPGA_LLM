@@ -1,14 +1,14 @@
 module PE_int(
     input                   clk,
 
-    input [8*16-1:0]        a
+    input [8*16-1:0]        a,
     input [6*16-1:0]        w,
 
     input signed [8-1:0]    scale,
     output signed [18+8-1:0]    o
 
 
-)
+);
 
 
 wire signed [8-1:0] a_vec [16-1:0];
@@ -51,8 +51,8 @@ end
 
 wire signed [17-1:0] st1w_ad [2-1:0];
 
-assign st1w_ad [0] = st0r_ad[0] + at0r_ad[1];
-assign st1w_ad [1] = st0r_ad[2] + at0r_ad[3];
+assign st1w_ad [0] = st0r_ad[0] + st0r_ad[1];
+assign st1w_ad [1] = st0r_ad[2] + st0r_ad[3];
 
 reg signed [18-1:0] st1r_ad;
 
@@ -61,14 +61,14 @@ always @(posedge clk) begin
 end
 
 
-reg signed [18+8-1:0] output_mul;
+(*use_dsp = "yes"*)reg signed [18+8-1:0] output_mul;
 reg signed [8-1:0] scale_d [2:0];
 
 always @(posedge clk) begin
     scale_d[0] <= scale;
-    scale_d[1] <= scale[0];
-    scale_d[2] <= scale[1];   
-    output_mul <= sclae[2] * st1r_ad;
+    scale_d[1] <= scale_d[0];
+    scale_d[2] <= scale_d[1];   
+    output_mul <= scale_d[2] * st1r_ad;
 end
 
 

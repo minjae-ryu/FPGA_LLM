@@ -13,7 +13,7 @@ module PE#
     input [16-1:0]       w_scale,
     input [32-1:0]       a_scale,
 
-    output  [29:0]       out,
+    output  [25+30-1:0]       out
 );
 
 
@@ -65,6 +65,9 @@ end
 
 
 
+
+
+
 // scale
 
 wire w_sign = w_scale[15];
@@ -78,11 +81,12 @@ wire a_mant = a_scale[22:0];
 
 
 
-reg sign [4:0];
+reg sign [1:0];
 reg [10:0] w_mant_ext;
 reg [23:0] a_mant_ext;
-reg [8:0]  exp_sum[4:0];
+reg [8:0]  exp_sum[6:0];
 
+//st0
 always @(posedge clk ) begin
     sign[0] <= w_sign^a_sign;
     w_mant_ext <= (w_exp == 0) ? {1'b0,w_mant} : {1'b1,w_mant};
@@ -91,13 +95,64 @@ always @(posedge clk ) begin
 end
 
 //st1
-reg [35-1:0] mant_mul;
+(*use_dsp = "yes"*)reg [35-1:0] mant_mul;
+
 
 always @(posedge clk ) begin
     sign[1] <= sign[0];
     exp_sum[1] <= exp_sum[0];
     mant_mul <= w_mant_ext * a_mant_ext;
 end
+
+//st2
+wire [25-1:0] trunc = {1'b0,mant_mul[35-1:11]};
+reg signed[25-1:0] mant_mul_f [3:0];
+
+always @(posedge clk ) begin
+    exp_sum[2] <= exp_sum[1];
+    mant_mul_f[0]<= (sign[1]) ? ~trunc+ 'b1: trunc;
+end
+
+//st3 
+
+always @(posedge clk ) begin
+    exp_sum[3] <= exp_sum[2];
+    mant_mul_f[1] <= mant_mul_f[0];
+end
+
+//st4 
+
+always @(posedge clk ) begin
+    exp_sum[4] <= exp_sum[3];
+    mant_mul_f[2] <= mant_mul_f[1];
+end
+
+//st5
+
+always @(posedge clk ) begin
+    exp_sum[5] <= exp_sum[4];
+    mant_mul_f[3] <= mant_mul_f[2];
+end
+
+
+// mul 
+
+(*use_dsp = "yes"*) reg signed [25+30-1:0]  output_mul;
+
+always @(posedge clk) begin
+    exp_sum[6] <= exp_sum[5];
+    output_mul <= mant_mul_f[3]*ad3;
+end
+
+
+
+
+// Q16.48
+assign out = output_mul; 
+
+//et
+
+
 
 
 

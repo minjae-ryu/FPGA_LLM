@@ -7,18 +7,13 @@ module PE#
 )
     (
     input               clk,
-
-
     input [8*256-1:0]    act,
     input [6*256-1:0]    weight,
-
     input [8*16-1:0]      scale,
-
-
-
+    input [16-1:0]       w_scale,
+    input [32-1:0]       a_scale,
 
     output  [29:0]       out,
-
 );
 
 
@@ -68,7 +63,45 @@ always @(posedge clk ) begin
     ad3 <= ad2[0] + ad2[1];
 end
 
-assign out = ad3;
+
+
+// scale
+
+wire w_sign = w_scale[15];
+wire w_exp  = w_scale[14:10];
+wire w_mant = w_scale[9:0];
+
+wire a_sign = a_scale[31];
+wire a_exp  = a_scale[30:23];
+wire a_mant = a_scale[22:0];
+
+
+
+
+reg sign [4:0];
+reg [10:0] w_mant_ext;
+reg [23:0] a_mant_ext;
+reg [8:0]  exp_sum[4:0];
+
+always @(posedge clk ) begin
+    sign[0] <= w_sign^a_sign;
+    w_mant_ext <= (w_exp == 0) ? {1'b0,w_mant} : {1'b1,w_mant};
+    a_mant_ext <= (a_exp == 0) ? {1'b0,a_mant} : {1'b1,a_mant};
+    exp_sum[0] <= w_exp + a_exp;
+end
+
+//st1
+reg [35-1:0] mant_mul;
+
+always @(posedge clk ) begin
+    sign[1] <= sign[0];
+    exp_sum[1] <= exp_sum[0];
+    mant_mul <= w_mant_ext * a_mant_ext;
+end
+
+
+
+
 endmodule
 
 

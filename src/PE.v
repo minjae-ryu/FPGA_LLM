@@ -5,153 +5,39 @@ module PE#
 (
     parameter CORE_DELAY = 6
 )
-    (
-    input               clk,
-    input [8*256-1:0]    act,
-    input [6*256-1:0]    weight,
-    input [8*16-1:0]      scale,
-    input [16-1:0]       w_scale,
-    input [32-1:0]       a_scale,
 
-    output  [25+30-1:0]       out
+(
+    input [63:0] 
+
+
+
+
+
 );
 
 
-
-wire [6*16-1:0] w_vec[16-1:0];
-wire [8*16-1:0] a_vec[16-1:0];
-wire signed [18+8-1:0] o_vec[16-1:0];
-wire signed [18+9-1:0] ad0[8-1:0];
-
-reg signed [18+10-1:0] ad1 [4-1:0];
-wire signed [18+11-1:0] ad2 [2-1:0];
-reg signed [18+12-1:0] ad3 ;
-
-genvar a;
-generate
-    for(a = 0; a < 16; a = a + 1)begin : Q6_K_MUL
-    assign w_vec[a] = weight[(a+1)*6*16-1:a*6*16];
-    assign a_vec[a] = act[(a+1)*8*16-1:a*8*16];
-        PE_int PE_int_uut(
-            .clk(clk),
-            .a(a_vec[a]),
-            .w(w_vec[a]),
-            .scale(scale[(a+1)*8-1:a*8]),
-            .o(o_vec[a])
-        );
-    end
-endgenerate
-
-genvar b;
-generate
-    for(b = 0; b < 8; b = b+1)begin
-        assign ad0[b] = o_vec[b*2+1] + o_vec[b*2];
-    end
-endgenerate
-
-always @(posedge clk ) begin
-    ad1[0] <= ad0[0] + ad0[1];
-    ad1[1] <= ad0[2] + ad0[3];
-    ad1[2] <= ad0[4] + ad0[5];
-    ad1[3] <= ad0[6] + ad0[7];
-end
-
-assign ad2[0] = ad1[0] + ad1[1];
-assign ad2[1] = ad1[2] + ad1[3];
-
-always @(posedge clk ) begin
-    ad3 <= ad2[0] + ad2[1];
-end
+// logic
+// GEMM mode GEMV mode Softmax mode
 
 
 
 
+PE_q8 mul_logic(
+    .clk(clk),
+    .delay(valid[2:0]),
+    .pass(pass),
+    .w(w),
+    .a(a),
+    .o(o)
+);
 
-
-// scale
-
-wire w_sign = w_scale[15];
-wire w_exp  = w_scale[14:10];
-wire w_mant = w_scale[9:0];
-
-wire a_sign = a_scale[31];
-wire a_exp  = a_scale[30:23];
-wire a_mant = a_scale[22:0];
-
-
-
-
-reg sign [1:0];
-reg [10:0] w_mant_ext;
-reg [23:0] a_mant_ext;
-reg [8:0]  exp_sum[6:0];
-
-//st0
-always @(posedge clk ) begin
-    sign[0] <= w_sign^a_sign;
-    w_mant_ext <= (w_exp == 0) ? {1'b0,w_mant} : {1'b1,w_mant};
-    a_mant_ext <= (a_exp == 0) ? {1'b0,a_mant} : {1'b1,a_mant};
-    exp_sum[0] <= w_exp + a_exp;
-end
-
-//st1
-(*use_dsp = "yes"*)reg [35-1:0] mant_mul;
-
-
-always @(posedge clk ) begin
-    sign[1] <= sign[0];
-    exp_sum[1] <= exp_sum[0];
-    mant_mul <= w_mant_ext * a_mant_ext;
-end
-
-//st2
-wire [25-1:0] trunc = {1'b0,mant_mul[35-1:11]};
-reg signed[25-1:0] mant_mul_f [3:0];
-
-always @(posedge clk ) begin
-    exp_sum[2] <= exp_sum[1];
-    mant_mul_f[0]<= (sign[1]) ? ~trunc+ 'b1: trunc;
-end
-
-//st3 
-
-always @(posedge clk ) begin
-    exp_sum[3] <= exp_sum[2];
-    mant_mul_f[1] <= mant_mul_f[0];
-end
-
-//st4 
-
-always @(posedge clk ) begin
-    exp_sum[4] <= exp_sum[3];
-    mant_mul_f[2] <= mant_mul_f[1];
-end
-
-//st5
-
-always @(posedge clk ) begin
-    exp_sum[5] <= exp_sum[4];
-    mant_mul_f[3] <= mant_mul_f[2];
-end
-
-
-// mul 
-
-(*use_dsp = "yes"*) reg signed [25+30-1:0]  output_mul;
-
-always @(posedge clk) begin
-    exp_sum[6] <= exp_sum[5];
-    output_mul <= mant_mul_f[3]*ad3;
-end
-
-
-
-
-// Q16.48
-assign out = output_mul; 
-
-//et
-
+scale_mul scale_logic(
+    .clk(clk),
+    .valid(valid[2:0]),
+    .ws(ws),
+    .as(as),
+    .o_scale(o_scale)
+);
 
 
 

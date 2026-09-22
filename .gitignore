@@ -12,6 +12,8 @@
 /testc
 /err.txt
 /stdout.txt
+/results/scores/
+/results/.*.checkpoint.json
 __pycache__/
 *.pyc
 .pytest_cache/

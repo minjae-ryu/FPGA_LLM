@@ -1,0 +1,62 @@
+{
+  "artifact": {
+    "bytes": 651320,
+    "path": "data/piqa_full.smeval",
+    "sha256": "ce62ee6175460293a62a965c8903a93719986d29c5382fffd3e082ca5cbb2351"
+  },
+  "format": "SMEVAL01",
+  "format_version": 1,
+  "kind": 2,
+  "libraries": {
+    "pyarrow": "25.0.1",
+    "python": "3.11.0rc1",
+    "tokenizers": "0.22.2",
+    "transformers": "5.15.1"
+  },
+  "lm_evaluation_harness_files": {
+    "boundary": "lm_eval/api/model.py TemplateLM._encode_pair; move trailing context spaces, tokenize context+continuation and context, then split",
+    "hellaswag_preprocess": null,
+    "normalization": "lm_eval/api/task.py process_results; completion_len is Python len() of each processed choice",
+    "task": "lm_eval/tasks/piqa/piqa.yaml"
+  },
+  "lm_evaluation_harness_revision": "d6de81643928d653435c431bae19945d41d32520",
+  "metrics": [
+    "raw_loglikelihood_accuracy",
+    "character_normalized_accuracy"
+  ],
+  "model": "HuggingFaceTB/SmolLM2-135M",
+  "normalization": "Python len() Unicode code points in the processed choice text; exclude target delimiter and moved context whitespace",
+  "original_examples": 1838,
+  "preprocessing": {
+    "choices": "[sol1, sol2]",
+    "query": "'Question: ' + goal + '\\nAnswer:'"
+  },
+  "record_count": 3676,
+  "source_files": [
+    {
+      "path": "/home/rmj/.cache/huggingface/hub/datasets--ybisk--piqa/snapshots/2e8ac2dffd59bac8c3c6714948f4c551a0848bb0/piqa.py",
+      "sha256": "99107ad59e6f5ffc26923f98bb4cb6e2029b0e368005e9639ea7eadc86d2d46b"
+    },
+    {
+      "path": "/home/rmj/.cache/huggingface/datasets/downloads/extracted/7b6f535dbe59b28b7e097b137617754056edd3cf9cbf05c960d10228ffa5a944/physicaliqa-train-dev/dev.jsonl",
+      "sha256": "a73f46cb5d72b2cc399522a79f27728a429d9b89d9a236243fcfda8c02588d54"
+    },
+    {
+      "path": "/home/rmj/.cache/huggingface/datasets/downloads/extracted/7b6f535dbe59b28b7e097b137617754056edd3cf9cbf05c960d10228ffa5a944/physicaliqa-train-dev/dev-labels.lst",
+      "sha256": "b4192dc3a2a0363d9d60ccf79800cbbe2f32ebb17726efdde6970e0b8131bceb"
+    }
+  ],
+  "source_revision": "2e8ac2dffd59bac8c3c6714948f4c551a0848bb0",
+  "target_count": 84004,
+  "target_delimiter": " ",
+  "task": "piqa",
+  "tokenization": {
+    "add_special_tokens": false,
+    "bos": false,
+    "eos": false
+  },
+  "tokenizer_revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+  "total_input_tokens": null,
+  "variant": "full",
+  "zero_shot": true
+}

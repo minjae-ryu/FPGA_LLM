@@ -1,0 +1,40 @@
+{
+  "artifact": {
+    "bytes": 4876184,
+    "path": "data/wikitext2_full.smeval",
+    "sha256": "4db5c38759a2a0f75701d20948879ca5254712b2505f1814e802180e07fee1f5"
+  },
+  "context": 2048,
+  "format": "SMEVAL01",
+  "format_version": 1,
+  "join": "\\n\\n",
+  "kind": 1,
+  "libraries": {
+    "pyarrow": "25.0.1",
+    "python": "3.11.0rc1",
+    "tokenizers": "0.22.2",
+    "transformers": "5.15.1"
+  },
+  "model": "HuggingFaceTB/SmolLM2-135M",
+  "original_examples": 4358,
+  "record_count": 593,
+  "source_files": [
+    {
+      "path": "/home/rmj/.cache/huggingface/hub/datasets--Salesforce--wikitext/snapshots/b08601e04326c79dfdd32d625aee71d232d685c3/wikitext-2-raw-v1/test-00000-of-00001.parquet",
+      "sha256": "5f1bea067869d04849c0f975a2b29c4ff47d867f484f5010ea5e861eab246d91"
+    }
+  ],
+  "source_revision": "b08601e04326c79dfdd32d625aee71d232d685c3",
+  "stride": 512,
+  "target_count": 304985,
+  "target_coverage": "global token indices 1..N-1 exactly once; first window scores 1..end and later windows only new targets",
+  "task": "wikitext2",
+  "tokenization": {
+    "add_special_tokens": false,
+    "bos": false,
+    "eos": false
+  },
+  "tokenizer_revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+  "total_input_tokens": 304986,
+  "variant": "full"
+}

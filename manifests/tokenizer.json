@@ -1,0 +1,16 @@
+{
+  "export_sha256": "c2145cd851d7d1614d206f825f805262c97c0b81c63f987ab5ec2552da066ad2",
+  "file_bytes": 1683200,
+  "format": {
+    "magic": "SMTOK001",
+    "version": 1
+  },
+  "merge_count": 48900,
+  "model": "HuggingFaceTB/SmolLM2-135M",
+  "payload_sha256": "da27898fd735238c5c7b41acc836dd1ded2755f828047f7bcc2e1a2c2a489dbe",
+  "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+  "source": "/home/rmj/.cache/huggingface/hub/models--HuggingFaceTB--SmolLM2-135M/snapshots/93efa2f097d58c2a74874c7e644dbc9b0cee75a2/tokenizer.json",
+  "source_sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+  "special_count": 17,
+  "vocab_size": 49152
+}

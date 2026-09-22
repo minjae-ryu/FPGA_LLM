@@ -1,0 +1,12 @@
+# Recorded preparation/test environment; use a repository-local virtualenv.
+# Install the CPU torch wheel via https://download.pytorch.org/whl/cpu if desired.
+numpy==1.26.4
+torch==2.6.0
+transformers==5.15.1
+tokenizers==0.22.2
+safetensors==0.8.0
+pyarrow==25.0.1
+pytest==8.4.2
+sentencepiece==0.2.2
+requests==2.32.4
+PyYAML==6.0.2

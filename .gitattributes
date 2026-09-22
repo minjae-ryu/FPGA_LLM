@@ -2,3 +2,5 @@
 win.c -whitespace
 build_msvc.bat -whitespace
 docs/llama2c-README.md -whitespace
+# Python's CSV writer uses standard CRLF record endings.
+results/*.csv whitespace=cr-at-eol

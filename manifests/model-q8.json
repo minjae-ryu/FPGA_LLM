@@ -1,0 +1,63 @@
+{
+  "config": {
+    "dim": 576,
+    "group_size": 64,
+    "head_dim": 64,
+    "heads": 9,
+    "intermediate": 1536,
+    "kv_heads": 3,
+    "layers": 30,
+    "max_context": 8192,
+    "rms_epsilon_f32": 9.999999747378752e-06,
+    "rope_theta_f32": 100000.0,
+    "tied_embeddings": 1,
+    "vocab": 49152
+  },
+  "dtype": "q8",
+  "format": "SML2C001",
+  "format_version": 1,
+  "output": {
+    "bytes": 143060480,
+    "path": "models/smollm2-q8.bin",
+    "sha256": "b9ab3f3690b6648fe3ba2c1b75e1cb9af93b54d6f4ce9ad93867d20c2e61873d",
+    "tensor_count": 272
+  },
+  "reproduction": {
+    "command": [
+      "python3",
+      "scripts/export_smollm.py",
+      "--source",
+      "/home/rmj/.cache/huggingface/hub/models--HuggingFaceTB--SmolLM2-135M/snapshots/93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+      "--output",
+      "models/smollm2-q8.bin",
+      "--dtype",
+      "q8",
+      "--manifest",
+      "manifests/model-q8.json"
+    ],
+    "numpy": "1.26.4",
+    "python": "3.11.0rc1",
+    "safetensors": "0.8.0",
+    "torch": "2.6.0+cpu"
+  },
+  "source": {
+    "config": {
+      "filename": "config.json",
+      "sha256": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843"
+    },
+    "kind": "huggingface_snapshot",
+    "model": "HuggingFaceTB/SmolLM2-135M",
+    "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+    "weights": {
+      "filename": "model.safetensors",
+      "sha256": "80521b40281d6ce74e35c9282c22539e75aa0ac8578892b2a59955ef78d55da1"
+    }
+  },
+  "verification": {
+    "f32_values_verified": 35136,
+    "method": "byte_exact_recompute_from_source_bf16",
+    "q8_values_verified": 134479872,
+    "status": "passed",
+    "tensor_count": 272
+  }
+}

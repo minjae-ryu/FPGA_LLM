@@ -1,0 +1,61 @@
+{
+  "artifact": {
+    "bytes": 14031648,
+    "path": "data/hellaswag_full.smeval",
+    "sha256": "a586a2f4395d819fae5ceaca99484f81a66a7fbefbe0710b5575f44767b1b7ca"
+  },
+  "format": "SMEVAL01",
+  "format_version": 1,
+  "kind": 2,
+  "libraries": {
+    "pyarrow": "25.0.1",
+    "python": "3.11.0rc1",
+    "tokenizers": "0.22.2",
+    "transformers": "5.15.1"
+  },
+  "lm_evaluation_harness_files": {
+    "boundary": "lm_eval/api/model.py TemplateLM._encode_pair; move trailing context spaces, tokenize context+continuation and context, then split",
+    "hellaswag_preprocess": "lm_eval/tasks/hellaswag/utils.py",
+    "normalization": "lm_eval/api/task.py process_results; completion_len is Python len() of each processed choice",
+    "task": "lm_eval/tasks/hellaswag/hellaswag.yaml"
+  },
+  "lm_evaluation_harness_revision": "d6de81643928d653435c431bae19945d41d32520",
+  "metrics": [
+    "raw_loglikelihood_accuracy",
+    "character_normalized_accuracy"
+  ],
+  "model": "HuggingFaceTB/SmolLM2-135M",
+  "normalization": "Python len() Unicode code points in the processed choice text; exclude target delimiter and moved context whitespace",
+  "original_examples": 10042,
+  "preprocessing": {
+    "choices": "preprocess(each ending)",
+    "context": "ctx_a + ' ' + ctx_b.capitalize()",
+    "preprocess": [
+      "strip",
+      "replace ' [title]' with '. '",
+      "remove non-greedy bracketed spans with \\[.*?\\]",
+      "replace each occurrence of two spaces with one space"
+    ],
+    "query": "preprocess(activity_label + ': ' + context)"
+  },
+  "record_count": 40168,
+  "source_files": [
+    {
+      "path": "/home/rmj/.cache/huggingface/hub/datasets--Rowan--hellaswag/snapshots/218ec52e09a7e7462a5400043bb9a69a41d06b76/data/validation-00000-of-00001.parquet",
+      "sha256": "899813071e1e95efafec90f856e1987d2150fa4d020fc005df6962c259f660cd"
+    }
+  ],
+  "source_revision": "218ec52e09a7e7462a5400043bb9a69a41d06b76",
+  "target_count": 1189452,
+  "target_delimiter": " ",
+  "task": "hellaswag",
+  "tokenization": {
+    "add_special_tokens": false,
+    "bos": false,
+    "eos": false
+  },
+  "tokenizer_revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+  "total_input_tokens": null,
+  "variant": "full",
+  "zero_shot": true
+}

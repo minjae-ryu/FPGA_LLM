@@ -1,0 +1,136 @@
+{
+  "reference": "Hand-derived IEEE-754 binary32 cases; expected values were specified independently of scripts/smollm_format.py.",
+  "valid": [
+    {
+      "name": "zero",
+      "length": 64,
+      "fill": 0.0,
+      "expected": {
+        "scale_bits": ["0x00000000"],
+        "q_fill": 0,
+        "q_overrides": {}
+      }
+    },
+    {
+      "name": "ties_even_and_sign",
+      "length": 64,
+      "fill": 0.0,
+      "overrides": {
+        "0": 127.0,
+        "1": 0.5,
+        "2": 1.5,
+        "3": 2.5,
+        "4": 3.5,
+        "5": -0.5,
+        "6": -1.5,
+        "7": -2.5,
+        "8": -3.5,
+        "9": -127.0
+      },
+      "expected": {
+        "scale_bits": ["0x3f800000"],
+        "q_fill": 0,
+        "q_overrides": {
+          "0": 127,
+          "1": 0,
+          "2": 2,
+          "3": 2,
+          "4": 4,
+          "5": 0,
+          "6": -2,
+          "7": -2,
+          "8": -4,
+          "9": -127
+        }
+      }
+    },
+    {
+      "name": "positive_clamp_after_subnormal_scale_rounding",
+      "length": 64,
+      "fill": 0.0,
+      "overrides_f32_bits": {
+        "0": "0x000035d3"
+      },
+      "expected": {
+        "scale_bits": ["0x0000006c"],
+        "q_fill": 0,
+        "q_overrides": {
+          "0": 127
+        }
+      }
+    },
+    {
+      "name": "two_group_boundary",
+      "length": 128,
+      "fill": 0.0,
+      "overrides": {
+        "0": 127.0,
+        "63": -63.5,
+        "64": -1.0,
+        "65": 3.0,
+        "127": 254.0
+      },
+      "expected": {
+        "scale_bits": ["0x3f800000", "0x40000000"],
+        "q_fill": 0,
+        "q_overrides": {
+          "0": 127,
+          "63": -64,
+          "64": 0,
+          "65": 2,
+          "127": 127
+        }
+      }
+    }
+  ],
+  "invalid": [
+    {
+      "name": "nan",
+      "length": 64,
+      "fill": 0.0,
+      "overrides_special": {
+        "7": "nan"
+      },
+      "error": "nonfinite"
+    },
+    {
+      "name": "positive_infinity",
+      "length": 64,
+      "fill": 0.0,
+      "overrides_special": {
+        "7": "+inf"
+      },
+      "error": "nonfinite"
+    },
+    {
+      "name": "negative_infinity",
+      "length": 64,
+      "fill": 0.0,
+      "overrides_special": {
+        "7": "-inf"
+      },
+      "error": "nonfinite"
+    },
+    {
+      "name": "unrepresentable_zero_scale",
+      "length": 64,
+      "fill": 0.0,
+      "overrides_f32_bits": {
+        "0": "0x00000001"
+      },
+      "error": "unrepresentable zero scale"
+    },
+    {
+      "name": "short_group",
+      "length": 63,
+      "fill": 0.0,
+      "error": "complete groups of 64"
+    },
+    {
+      "name": "partial_second_group",
+      "length": 65,
+      "fill": 0.0,
+      "error": "complete groups of 64"
+    }
+  ]
+}

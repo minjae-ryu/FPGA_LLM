@@ -97,8 +97,8 @@ full FP32 shadow cache. Cache accounting distinguishes permanent/scratch bytes.
 
 Implement the pinned tokenizer's Digits -> ByteLevel -> BPE pipeline, special
 tokens, byte mapping and decode in C using PCRE2. General encoding does not add
-BOS/EOS. Empty generation starts from token 0. The tokenizer worker owns its
-versioned binary format and documents it here before integration.
+BOS/EOS. Empty generation starts from token 0. The versioned binary format is
+documented in `docs/design/tokenizer.md`.
 
 ## Reference and evaluation files
 
@@ -112,10 +112,12 @@ u32 record_count. Each record starts with eight u32 fields: group, label,
 choice, nchoices, token_count, score_start, score_end, norm_chars; then token IDs
 as u32. `[score_start,score_end)` contains target token indices (start >=1).
 The prediction for target j is output at j-1. Records reset cache/local position.
-LM group/choice/label are zero, nchoices=1; normalization uses target count.
+LM group/choice/label are zero, nchoices=1, norm_chars=0 (unused); normalization
+uses target count.
 MC records are contiguous by group and choice, with the same label/nchoices.
-`norm_chars` is the number of Unicode characters in the original continuation,
-never its UTF-8 byte count or the token count. Validate every length and bound.
+`norm_chars` is the number of Unicode characters in the original processed
+choice, excluding the added delimiter and any moved context whitespace; never
+its UTF-8 byte count or the token count. Validate every length and bound.
 
 WikiText-2 raw test strings join with `\n\n`, no BOS/EOS, context 2048/stride 512.
 Windows begin 0,512,... until the last target is covered. Score targets 1..end-1

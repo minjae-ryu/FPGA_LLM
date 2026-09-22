@@ -1,0 +1,10 @@
+{
+  "binary_sha256": "f05906efefe2cee8cd8652a83b7c795128abef00ec21aec6ad7dfa318a7304e9",
+  "flags": "-O3 -std=c11 -Wall -Wextra -Wpedantic -fno-fast-math -ffp-contract=off -fopenmp -march=native",
+  "legacy_c": "make run testcc: ALL OK",
+  "legacy_python_c": "pytest -q test_all.py: 2 passed",
+  "model_reference": "HF CPU FP32 eager, source BF16 exact export, revision 93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+  "memory_checks": "cache/kernel ASan + UBSan + LSan: passed; LSan outside sandbox",
+  "local_skills": "3 valid frontmatters; all repository-local",
+  "large_artifacts": "ignored"
+}

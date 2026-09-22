@@ -74,3 +74,27 @@ testcc:
 clean:
 	rm -f run
 	rm -f runq
+
+# SmolLM2 accuracy build. The legacy targets above intentionally stay unchanged.
+SM_CFLAGS ?= -O3 -std=c11 -Wall -Wextra -Wpedantic -fno-fast-math -ffp-contract=off -fopenmp -march=native
+SM_CPPFLAGS = -Iinclude $(shell pkg-config --cflags openblas libpcre2-8) -DSM_BUILD_FLAGS='"$(SM_CFLAGS)"'
+SM_LIBS = $(shell pkg-config --libs openblas libpcre2-8) -lm -fopenmp
+SM_SOURCES = src/model.c src/session.c src/kernels.c src/cache.c src/math_ops.c src/scoring.c src/sampling.c
+SM_COMMANDS = src/cli_common.c src/main.c src/generate.c src/tokenizer.c src/evaluate.c src/benchmark.c src/replay.c src/compare_results.c
+SM_HEADERS = include/smollm.h src/internal.h
+PYTHON ?= python3
+
+build:
+	mkdir -p build
+
+build/libsmollm.so: $(SM_SOURCES) $(SM_HEADERS) | build
+	$(CC) $(SM_CFLAGS) $(SM_CPPFLAGS) -fPIC -shared $(SM_SOURCES) -o $@ $(SM_LIBS)
+
+.PHONY: smollm check
+build/smollm: $(SM_SOURCES) $(SM_HEADERS) include/sm_cli.h include/sm_tokenizer.h $(SM_COMMANDS) | build
+	$(CC) $(SM_CFLAGS) $(SM_CPPFLAGS) $(SM_SOURCES) $(SM_COMMANDS) -o $@ $(SM_LIBS)
+
+smollm: build/libsmollm.so build/smollm
+
+check: smollm
+	OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 $(PYTHON) -m pytest -q tests

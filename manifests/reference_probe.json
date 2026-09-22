@@ -1,0 +1,413 @@
+{
+  "artifacts": {
+    "logits": {
+      "dtype": "little-endian float32",
+      "path": "artifacts/reference/probe.logits",
+      "sha256": "6ba6cb197a8be66f49526e2f37e0aec63e96de2f09d5d93bec37feaec045d2da",
+      "shape": [
+        57,
+        49152
+      ],
+      "tensor": "logits"
+    },
+    "tokens": {
+      "format": "SMTOK001 + little-endian u32 count + u32 token IDs",
+      "path": "artifacts/reference/probe.tokens",
+      "sha256": "88d223f9f600a238e541743196efb0eadd156c4ab5c812df958a823aadf39216",
+      "shape": [
+        57
+      ]
+    }
+  },
+  "capture_semantics": {
+    "attention": "pre-o-proj concatenated-head attention output",
+    "attn_norm": "input RMSNorm output",
+    "attn_residual": "hidden state after attention residual add",
+    "ffn_norm": "post-attention RMSNorm output",
+    "ffn_residual": "decoder-layer output after MLP residual add",
+    "k_rope": "HF split-half rotary key, [token,kv_head,head_dim]",
+    "q_rope": "HF split-half rotary query, [token,query_head,head_dim]"
+  },
+  "chunk_comparisons": null,
+  "conversion": "load pinned BF16 tensors as CPU float32; BF16 values are exactly representable",
+  "execution": {
+    "attention": "eager",
+    "device": "cpu",
+    "dtype": "float32",
+    "interop_threads": 1,
+    "threads": 1
+  },
+  "format_version": 1,
+  "intermediates": [
+    {
+      "dtype": "little-endian float32",
+      "path": "artifacts/reference/probe.layer0.attention.f32",
+      "sha256": "666cdfa85bf1c2a5aa70cfbbf38b70dda1342cd26118cc367271798519b21105",
+      "shape": [
+        57,
+        576
+      ],
+      "site": "layer0.attention",
+      "tensor": "layer0.attention"
+    },
+    {
+      "dtype": "little-endian float32",
+      "path": "artifacts/reference/probe.layer0.attn_norm.f32",
+      "sha256": "89b27f6509d75013530b410613110a50288bb5aa55318372f55c424af9b8ea61",
+      "shape": [
+        57,
+        576
+      ],
+      "site": "layer0.attn_norm",
+      "tensor": "layer0.attn_norm"
+    },
+    {
+      "dtype": "little-endian float32",
+      "path": "artifacts/reference/probe.layer0.attn_residual.f32",
+      "sha256": "bc051f318c1b7b8f01315ff9bc7fb16804ceb5329618e88721707b021afab1ad",
+      "shape": [
+        57,
+        576
+      ],
+      "site": "layer0.attn_residual",
+      "tensor": "layer0.attn_residual"
+    },
+    {
+      "dtype": "little-endian float32",
+      "path": "artifacts/reference/probe.layer0.ffn_norm.f32",
+      "sha256": "516b1b5799306790966f21b2937098f0540e43301b8b7b95d8fab82c82a30f4b",
+      "shape": [
+        57,
+        576
+      ],
+      "site": "layer0.ffn_norm",
+      "tensor": "layer0.ffn_norm"
+    },
+    {
+      "dtype": "little-endian float32",
+      "path": "artifacts/reference/probe.layer0.ffn_residual.f32",
+      "sha256": "52181e17ce0b73b75361c2415add4947a04836c0cd55c24402d55f5ef3938e55",
+      "shape": [
+        57,
+        576
+      ],
+      "site": "layer0.ffn_residual",
+      "tensor": "layer0.ffn_residual"
+    },
+    {
+      "dtype": "little-endian float32",
+      "path": "artifacts/reference/probe.layer0.k_rope.f32",
+      "sha256": "15c6e6cef1af79a97ffff2820bc4dcbbe5975009d6b203c8c6385482e7b5512e",
+      "shape": [
+        57,
+        3,
+        64
+      ],
+      "site": "layer0.k_rope",
+      "tensor": "layer0.k_rope"
+    },
+    {
+      "dtype": "little-endian float32",
+      "path": "artifacts/reference/probe.layer0.q_rope.f32",
+      "sha256": "000814cc47f6a2fe79c82e6f2bf08c6e7a2c568adb2f37661a4e916eefe14fd5",
+      "shape": [
+        57,
+        9,
+        64
+      ],
+      "site": "layer0.q_rope",
+      "tensor": "layer0.q_rope"
+    },
+    {
+      "dtype": "little-endian float32",
+      "path": "artifacts/reference/probe.layer14.attention.f32",
+      "sha256": "a1bec3d57981f5a9b277d8a406126c29ed17c6b65e23a27c9e3a93fbaba931d5",
+      "shape": [
+        57,
+        576
+      ],
+      "site": "layer14.attention",
+      "tensor": "layer14.attention"
+    },
+    {
+      "dtype": "little-endian float32",
+      "path": "artifacts/reference/probe.layer14.attn_norm.f32",
+      "sha256": "1fe0e4ef7474f2b01c8c3fe1620c0643260710dfb89f9c6184ede0cca8e741fc",
+      "shape": [
+        57,
+        576
+      ],
+      "site": "layer14.attn_norm",
+      "tensor": "layer14.attn_norm"
+    },
+    {
+      "dtype": "little-endian float32",
+      "path": "artifacts/reference/probe.layer14.attn_residual.f32",
+      "sha256": "62b91f4c001ef16c00efa78fe0f50f207955b7beb72a6fa295f53bcc87c2f00e",
+      "shape": [
+        57,
+        576
+      ],
+      "site": "layer14.attn_residual",
+      "tensor": "layer14.attn_residual"
+    },
+    {
+      "dtype": "little-endian float32",
+      "path": "artifacts/reference/probe.layer14.ffn_norm.f32",
+      "sha256": "e3a6e8975c3b1d2f463869203d1c364bba9414689ccd411634d7e51072190dd1",
+      "shape": [
+        57,
+        576
+      ],
+      "site": "layer14.ffn_norm",
+      "tensor": "layer14.ffn_norm"
+    },
+    {
+      "dtype": "little-endian float32",
+      "path": "artifacts/reference/probe.layer14.ffn_residual.f32",
+      "sha256": "74019fb7e020c2237388b016ccee4853259917d0fd8768bd1da0dd0d4940d8eb",
+      "shape": [
+        57,
+        576
+      ],
+      "site": "layer14.ffn_residual",
+      "tensor": "layer14.ffn_residual"
+    },
+    {
+      "dtype": "little-endian float32",
+      "path": "artifacts/reference/probe.layer14.k_rope.f32",
+      "sha256": "bd28b5a8cf085f810a559227529e1e2a75c1d605dcf207e9aa53fea4b60a9002",
+      "shape": [
+        57,
+        3,
+        64
+      ],
+      "site": "layer14.k_rope",
+      "tensor": "layer14.k_rope"
+    },
+    {
+      "dtype": "little-endian float32",
+      "path": "artifacts/reference/probe.layer14.q_rope.f32",
+      "sha256": "8d5e06d57862fde92f1fd476b5eb6a84d21430e90fe30c34bfbc045c7c11a4ca",
+      "shape": [
+        57,
+        9,
+        64
+      ],
+      "site": "layer14.q_rope",
+      "tensor": "layer14.q_rope"
+    },
+    {
+      "dtype": "little-endian float32",
+      "path": "artifacts/reference/probe.layer29.attention.f32",
+      "sha256": "2b7f5b4a51fdf7794291a6b0a8416568fcb8fcc9f2693e7093edff06ce5a4393",
+      "shape": [
+        57,
+        576
+      ],
+      "site": "layer29.attention",
+      "tensor": "layer29.attention"
+    },
+    {
+      "dtype": "little-endian float32",
+      "path": "artifacts/reference/probe.layer29.attn_norm.f32",
+      "sha256": "00d2709c5e6f006b1eb6bf7a9f7e70c5f8d486db55c75d3aca27405e8e32cc89",
+      "shape": [
+        57,
+        576
+      ],
+      "site": "layer29.attn_norm",
+      "tensor": "layer29.attn_norm"
+    },
+    {
+      "dtype": "little-endian float32",
+      "path": "artifacts/reference/probe.layer29.attn_residual.f32",
+      "sha256": "87bc10bc27fc095dd171eeeadc77f1f0c27b788f2ec6ef681d55c4f0d09baa67",
+      "shape": [
+        57,
+        576
+      ],
+      "site": "layer29.attn_residual",
+      "tensor": "layer29.attn_residual"
+    },
+    {
+      "dtype": "little-endian float32",
+      "path": "artifacts/reference/probe.layer29.ffn_norm.f32",
+      "sha256": "6a77baaf46e946c44ed7a9ca5e3b0213217c1dbdf02b3bdc6ab18c227408236a",
+      "shape": [
+        57,
+        576
+      ],
+      "site": "layer29.ffn_norm",
+      "tensor": "layer29.ffn_norm"
+    },
+    {
+      "dtype": "little-endian float32",
+      "path": "artifacts/reference/probe.layer29.ffn_residual.f32",
+      "sha256": "0dc00e6bc23926146ed7ba6cafa808d24b063f041b3984b9b44a29ea82bcb23e",
+      "shape": [
+        57,
+        576
+      ],
+      "site": "layer29.ffn_residual",
+      "tensor": "layer29.ffn_residual"
+    },
+    {
+      "dtype": "little-endian float32",
+      "path": "artifacts/reference/probe.layer29.k_rope.f32",
+      "sha256": "9b15c439f8cf405c15bf1fd4af4ee26c58b9c7401d0b613c20acefbe40f300e8",
+      "shape": [
+        57,
+        3,
+        64
+      ],
+      "site": "layer29.k_rope",
+      "tensor": "layer29.k_rope"
+    },
+    {
+      "dtype": "little-endian float32",
+      "path": "artifacts/reference/probe.layer29.q_rope.f32",
+      "sha256": "82f4809d7233754fa9af2918d70d52cb133a77ea539db5938ec6ce818fabe1ac",
+      "shape": [
+        57,
+        9,
+        64
+      ],
+      "site": "layer29.q_rope",
+      "tensor": "layer29.q_rope"
+    }
+  ],
+  "libraries": {
+    "numpy": "1.26.4",
+    "python": "3.11.0rc1",
+    "tokenizers": "0.22.2",
+    "torch": "2.6.0+cpu",
+    "transformers": "5.15.1"
+  },
+  "mean_nll_fp64": 4.090981860112246,
+  "model": "HuggingFaceTB/SmolLM2-135M",
+  "model_revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+  "reference": "probe",
+  "source_files_sha256": {
+    "config.json": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843",
+    "merges.txt": "0b54e8aa4e53d5383e2e4bc635a56b43f9647f7b13832d5d9ecd8f82dac4f510",
+    "model.safetensors": "80521b40281d6ce74e35c9282c22539e75aa0ac8578892b2a59955ef78d55da1",
+    "special_tokens_map.json": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3",
+    "tokenizer.json": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+    "tokenizer_config.json": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424",
+    "vocab.json": "82b84012e3add4d01d12ba14442026e49b8cbbaead1f79ecf3d919784f82dc79"
+  },
+  "source_tensor_dtype": "bfloat16",
+  "system": {
+    "cpu_model": "AMD Ryzen 9 7900 12-Core Processor",
+    "machine": "x86_64",
+    "numpy_build": {
+      "Build Dependencies": {
+        "blas": {
+          "detection method": "pkgconfig",
+          "found": true,
+          "include directory": "/usr/local/include",
+          "lib directory": "/usr/local/lib",
+          "name": "openblas64",
+          "openblas configuration": "USE_64BITINT=1 DYNAMIC_ARCH=1 DYNAMIC_OLDER= NO_CBLAS= NO_LAPACK= NO_LAPACKE= NO_AFFINITY=1 USE_OPENMP= HASWELL MAX_THREADS=2",
+          "pc file directory": "/usr/local/lib/pkgconfig",
+          "version": "0.3.23.dev"
+        },
+        "lapack": {
+          "detection method": "internal",
+          "found": true,
+          "include directory": "unknown",
+          "lib directory": "unknown",
+          "name": "dep140213194937296",
+          "openblas configuration": "unknown",
+          "pc file directory": "unknown",
+          "version": "1.26.4"
+        }
+      },
+      "Compilers": {
+        "c": {
+          "args": "-fno-strict-aliasing",
+          "commands": "cc",
+          "linker": "ld.bfd",
+          "linker args": "-Wl,--strip-debug, -fno-strict-aliasing",
+          "name": "gcc",
+          "version": "10.2.1"
+        },
+        "c++": {
+          "commands": "c++",
+          "linker": "ld.bfd",
+          "linker args": "-Wl,--strip-debug",
+          "name": "gcc",
+          "version": "10.2.1"
+        },
+        "cython": {
+          "commands": "cython",
+          "linker": "cython",
+          "name": "cython",
+          "version": "3.0.8"
+        }
+      },
+      "Machine Information": {
+        "build": {
+          "cpu": "x86_64",
+          "endian": "little",
+          "family": "x86_64",
+          "system": "linux"
+        },
+        "host": {
+          "cpu": "x86_64",
+          "endian": "little",
+          "family": "x86_64",
+          "system": "linux"
+        }
+      },
+      "Python Information": {
+        "path": "/opt/python/cp311-cp311/bin/python",
+        "version": "3.11"
+      },
+      "SIMD Extensions": {
+        "baseline": [
+          "SSE",
+          "SSE2",
+          "SSE3"
+        ],
+        "found": [
+          "SSSE3",
+          "SSE41",
+          "POPCNT",
+          "SSE42",
+          "AVX",
+          "F16C",
+          "FMA3",
+          "AVX2",
+          "AVX512F",
+          "AVX512CD",
+          "AVX512_SKX",
+          "AVX512_CLX",
+          "AVX512_CNL",
+          "AVX512_ICL"
+        ],
+        "not found": [
+          "AVX512_KNL",
+          "AVX512_KNM"
+        ]
+      }
+    },
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "python_compiler": "GCC 11.2.0",
+    "thread_environment": {
+      "MKL_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1"
+    },
+    "torch_build": "PyTorch built with:\n  - GCC 9.3\n  - C++ Version: 201703\n  - Intel(R) oneAPI Math Kernel Library Version 2024.2-Product Build 20240605 for Intel(R) 64 architecture applications\n  - Intel(R) MKL-DNN v3.5.3 (Git Hash 66f0cb9eb66affd2da3bf5f8d897376f04aae6af)\n  - OpenMP 201511 (a.k.a. OpenMP 4.5)\n  - LAPACK is enabled (usually provided by MKL)\n  - NNPACK is enabled\n  - CPU capability usage: AVX512\n  - Build settings: BLAS_INFO=mkl, BUILD_TYPE=Release, COMMIT_SHA=2236df1770800ffea5697b11b0bb0d910b2e59e1, CXX_COMPILER=/opt/rh/devtoolset-9/root/usr/bin/c++, CXX_FLAGS= -D_GLIBCXX_USE_CXX11_ABI=0 -fabi-version=11 -fvisibility-inlines-hidden -DUSE_PTHREADPOOL -DNDEBUG -DUSE_KINETO -DLIBKINETO_NOCUPTI -DLIBKINETO_NOROCTRACER -DLIBKINETO_NOXPUPTI=ON -DUSE_FBGEMM -DUSE_PYTORCH_QNNPACK -DUSE_XNNPACK -DSYMBOLICATE_MOBILE_DEBUG_HANDLE -O2 -fPIC -Wall -Wextra -Werror=return-type -Werror=non-virtual-dtor -Werror=bool-operation -Wnarrowing -Wno-missing-field-initializers -Wno-type-limits -Wno-array-bounds -Wno-unknown-pragmas -Wno-unused-parameter -Wno-strict-overflow -Wno-strict-aliasing -Wno-stringop-overflow -Wsuggest-override -Wno-psabi -Wno-error=old-style-cast -Wno-missing-braces -fdiagnostics-color=always -faligned-new -Wno-unused-but-set-variable -Wno-maybe-uninitialized -fno-math-errno -fno-trapping-math -Werror=format -Wno-stringop-overflow, LAPACK_INFO=mkl, PERF_WITH_AVX=1, PERF_WITH_AVX2=1, TORCH_VERSION=2.6.0, USE_CUDA=0, USE_CUDNN=OFF, USE_CUSPARSELT=OFF, USE_EXCEPTION_PTR=1, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_GLOO=ON, USE_MKL=ON, USE_MKLDNN=ON, USE_MPI=OFF, USE_NCCL=OFF, USE_NNPACK=ON, USE_OPENMP=ON, USE_ROCM=OFF, USE_ROCM_KERNEL_ASSERT=OFF, \n"
+  },
+  "target_count": 56,
+  "text": "On a quiet morning, the engineer opened the lab window and watched rain gather on the glass. She wrote down one careful question: could a small, efficient machine learn to reason from clear examples? Then she tested it, measured every result, and saved the evidence for the next person.",
+  "token_count": 57,
+  "tokenization": {
+    "add_special_tokens": false,
+    "bos": false,
+    "eos": false
+  }
+}

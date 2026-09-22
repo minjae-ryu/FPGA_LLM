@@ -1,0 +1,9 @@
+{
+  "original_fpga_main": "8051b2ab782a4908dea802dded821c2cc4d765f3",
+  "llama2c_revision": "350e04fe35433e6d2941dce5a1f53308f87058eb",
+  "model": "HuggingFaceTB/SmolLM2-135M",
+  "model_revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+  "project_settings_scope": "repository-local",
+  "legacy_validation": "make run testcc",
+  "status": "setup validated; engine gates pending"
+}

@@ -1,2 +1,4 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Preserve the imported legacy Windows sources and README byte-for-byte.
+win.c -whitespace
+build_msvc.bat -whitespace
+docs/llama2c-README.md -whitespace

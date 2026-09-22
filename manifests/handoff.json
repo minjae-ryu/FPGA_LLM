@@ -1,21 +1,31 @@
 {
-  "handoff_time": "2026-09-22T21:40:13+09:00",
-  "reason": "User requested a handoff and restart in a new session; stop new long-running work.",
+  "updated_at_utc": "2026-09-22T13:06:22.370763+00:00",
   "workspace": "/home/rmj/FPGA_LLM/llama2.c",
-  "branch": "stage/fp32-baseline",
-  "remote_main": "4e9f6c5",
-  "latest_full_suite": "141 passed in 8.20s",
-  "after_full_suite": "compare-results escaped U+0000/raw UTF-8 fix: focused 29 passed; integrated build and -fanalyzer passed",
+  "source_commit": "134321d78ecec1ccdee0cdd3377b677030af7905",
+  "latest_full_suite": "143 passed in 8.72s",
   "current_binary_sha256": "32c208d95e7d399d60c7f87981833331dc0514eef05451e33a68609028d1f85e",
-  "numerical_matrix_binary_sha256": "f05906efefe2cee8cd8652a83b7c795128abef00ec21aec6ad7dfa318a7304e9",
+  "numerical_matrix_binary_sha256": "32c208d95e7d399d60c7f87981833331dc0514eef05451e33a68609028d1f85e",
+  "latest_user_scope": "Small first benchmark; total measurement time capped at 30 minutes, including prior measurements.",
+  "measurement_status": "completed_small_scope",
+  "measurement_conservative_elapsed_seconds": 1113.121011,
+  "completed": {
+    "numerical_groups": {
+      "chunks": 32,
+      "intermediates": 21,
+      "linear": 88,
+      "logits": 8,
+      "math": 19,
+      "traces": 222
+    },
+    "performance_cells": 4,
+    "smoke_evaluation_cells": 12,
+    "c_smoke_comparison_rows": 9
+  },
   "long_running_processes_started_by_this_session": [],
   "pending": [
-    "Full suite after final parser regression additions",
-    "Freeze final executable and update build manifest",
-    "All four configurations full smoke matrix",
-    "Full WikiText-2 raw test / HellaSwag validation / PIQA validation in all four configurations",
-    "Serialized performance matrix: prompts128/512/2048 decode128 threads1/12 warmup2 repetitions5",
-    "C comparison of evaluation results and final summary",
-    "Integrate verified branch into main and push"
-  ]
+    "Full evaluation splits in all four configurations are deferred under the reduced scope.",
+    "The original 24-cell performance matrix is partial; 11 original cells are checkpointed and preserved."
+  ],
+  "git_status_note": "Use git status and git log to determine the current branch/integration commit; source files remain identical to source_commit.",
+  "report": "docs/results.md"
 }

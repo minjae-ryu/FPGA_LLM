@@ -1,0 +1,66 @@
+{
+  "maximum_measurement_wall_seconds": 1800,
+  "budget_start_utc": "2026-09-22T12:46:00+00:00",
+  "budget_start_note": "Conservative lower bound before the first performance matrix launched; time already spent is included.",
+  "deadline_utc": "2026-09-22T13:16:00+00:00",
+  "user_scope": "First use a small number of benchmark cases; cap total measurement time at 30 minutes.",
+  "performance": {
+    "configurations": [
+      "fp32_fp32",
+      "w8a8_fp32",
+      "fp32_kv8",
+      "w8a8_kv8"
+    ],
+    "prompt_tokens": [
+      128
+    ],
+    "threads": [
+      1
+    ],
+    "decode_tokens": 128,
+    "warmup_repetitions": 2,
+    "measured_repetitions": 5,
+    "fresh_processes": 4,
+    "reuse_completed_matching_cells": true,
+    "completed": 4,
+    "earlier_extended_cells_preserved": 11
+  },
+  "evaluation": {
+    "variant": "smoke",
+    "tasks": [
+      "wikitext2",
+      "hellaswag",
+      "piqa"
+    ],
+    "configurations": 4,
+    "jobs": 4,
+    "threads": 3,
+    "full_split": "deferred by user scope",
+    "invocation": [
+      "python3",
+      "scripts/run_benchmarks.py",
+      "eval",
+      "--variant",
+      "smoke",
+      "--jobs",
+      "4",
+      "--threads",
+      "3",
+      "--progress-every",
+      "10"
+    ],
+    "started_at_utc": "2026-09-22T13:01:26.099746+00:00",
+    "completed": 12,
+    "timing_scope": "concurrent_not_isolated"
+  },
+  "deadline_enforcement": "GNU timeout sends SIGINT with a 5-second SIGKILL grace, scheduled before the common deadline.",
+  "status": "completed_small_scope",
+  "measurement_finished_at_utc": "2026-09-22T13:04:33.121011+00:00",
+  "conservative_elapsed_wall_seconds": 1113.121011,
+  "within_budget": true,
+  "comparison": {
+    "implementation": "C compare-results",
+    "smoke_delta_rows": 9,
+    "report": "docs/results.md"
+  }
+}

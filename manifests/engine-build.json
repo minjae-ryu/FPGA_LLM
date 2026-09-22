@@ -1,10 +1,95 @@
 {
-  "binary_sha256": "f05906efefe2cee8cd8652a83b7c795128abef00ec21aec6ad7dfa318a7304e9",
+  "binary_sha256": "32c208d95e7d399d60c7f87981833331dc0514eef05451e33a68609028d1f85e",
+  "build_command": "make smollm check",
+  "build_status": "existing executable up to date; all checks passed",
+  "compiler": "gcc (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+  "cpu": {
+    "architecture": "x86_64",
+    "logical_cpus": 24,
+    "model": "AMD Ryzen 9 7900 12-Core Processor",
+    "physical_cores": 12
+  },
+  "evaluation_thread_gate": {
+    "binary_sha256": "32c208d95e7d399d60c7f87981833331dc0514eef05451e33a68609028d1f85e",
+    "probes": [
+      {
+        "max_abs": 9.44137573242e-05,
+        "nll_delta": -3.04112805034e-07,
+        "parity_pass": true,
+        "tokens": 57,
+        "top1_changes": 0
+      },
+      {
+        "max_abs": 0.000351905822754,
+        "nll_delta": 6.89774502088e-08,
+        "parity_pass": true,
+        "tokens": 315,
+        "top1_changes": 0
+      }
+    ],
+    "threads": 3
+  },
+  "final_measurements": {
+    "c_comparison_rows": 9,
+    "complete_24_cell_performance": "deferred",
+    "full_evaluation": "deferred",
+    "performance_cells": 4,
+    "plan": "manifests/measurement-plan.json",
+    "scope": "small, user-capped at 30 minutes",
+    "smoke_evaluation_cells": 12
+  },
   "flags": "-O3 -std=c11 -Wall -Wextra -Wpedantic -fno-fast-math -ffp-contract=off -fopenmp -march=native",
+  "full_suite": {
+    "command": "make smollm check",
+    "passed": 143,
+    "seconds": 8.72
+  },
+  "large_artifacts": "ignored",
   "legacy_c": "make run testcc: ALL OK",
   "legacy_python_c": "pytest -q test_all.py: 2 passed",
-  "model_reference": "HF CPU FP32 eager, source BF16 exact export, revision 93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
-  "memory_checks": "cache/kernel ASan + UBSan + LSan: passed; LSan outside sandbox",
   "local_skills": "3 valid frontmatters; all repository-local",
-  "large_artifacts": "ignored"
+  "memory_checks": "cache/kernel ASan + UBSan + LSan: passed; LSan outside sandbox",
+  "model_reference": "HF CPU FP32 eager, source BF16 exact export, revision 93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+  "numerical_matrix": {
+    "command": "python3 scripts/run_numerical.py",
+    "group_counts": {
+      "chunks": 32,
+      "intermediates": 21,
+      "linear": 88,
+      "logits": 8,
+      "math": 19,
+      "traces": 222
+    },
+    "status": "passed",
+    "threads": 1
+  },
+  "openblas": "OpenBLAS 0.3.20 NO_LAPACKE DYNAMIC_ARCH NO_AFFINITY Zen MAX_THREADS=64",
+  "openblas_core": "Zen",
+  "pcre2": "10.39",
+  "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+  "prior_checks_note": "Legacy and sanitizer results above were completed before checkpoint 134321d; their source files remain unchanged. The 143-test suite and complete numerical matrix were rerun in this session.",
+  "source_commit": "134321d78ecec1ccdee0cdd3377b677030af7905",
+  "source_files_sha256": {
+    "Makefile": "38b1b5101ceac66a778ff4cdff139d4c8b284bb10e30b06404ce5f8141575f22",
+    "include/sm_cli.h": "cadc8f88dbe28a223ba1609fb92b7570ff26dc2c4b25955d2e1516904487aac2",
+    "include/sm_tokenizer.h": "a19f8c2b9744d7952aa7009f6edb4a60675df8457f5c0d71142a85e3ed947bf2",
+    "include/smollm.h": "ace51a957804438ed5298ba6f0a73e740227b155b54b1f5b65df9500368eda87",
+    "src/benchmark.c": "cb5dad3b090565941254dacdf8f78fab7a9eba06a5cb559b9fa69130ee54d378",
+    "src/cache.c": "b6f0e3adb770bc7c699aac7afa1f5fdfa74d32de94dc95a0108f3a62787a10e4",
+    "src/cli_common.c": "90caeb355f2748fc7827de85407da41644881d039dedb2c38d3aae78c7fa04b0",
+    "src/compare_results.c": "b65944b9bbc1c8986bd609c35a678c71886cea589f1e981a724e11b32a952684",
+    "src/evaluate.c": "986b1f0cbf8ffc6efff4f6ca0e1e782d1e302b01dbc60244577c1b0bc6a99b57",
+    "src/generate.c": "71bdf3c0f628bffba191b051a7fa38a166ec142a48daeaaf1f5cda19ec708db3",
+    "src/internal.h": "41fa98b7df2d2b6a496cdb09097c91325fff9fad532cccdd946262587615b25a",
+    "src/kernels.c": "d62e2f298a369b7c14c160d65012890e926fa2a087ea3c899ec1ee59348b98cf",
+    "src/main.c": "9a9d7474c33d0d8d86c52caaa851e69209303c1b43a0a27609136293222a99e6",
+    "src/math_ops.c": "78109c2cfcc5067ea3196ec01864642611b8c1680cf263dc1378dd3fb6112fd5",
+    "src/model.c": "01647538e3ad7df6e93bffb57324935384975acbf148e093436518cec9586340",
+    "src/replay.c": "1c08b4816825e1dc0cb1e5626b56179dd48270de0251aa91bb42892b43e1a0f1",
+    "src/sampling.c": "d34831c5d5e9f6f7e62d94ccd0de7b09c71ee2a87f27d120171f8f0900b966cf",
+    "src/scoring.c": "e62a4f8f751f15f21829fa8413b0261f452fc84130269475f4010e400aede87d",
+    "src/session.c": "d5f197e367eeb06ca88a4f0e65c300afb1275a2d40b9eacc19bf46fdf71fe011",
+    "src/tokenizer.c": "d4c8a49c5b4d3a0e0ee16725adf564a65331348acc96767d83cdc85321accc13"
+  },
+  "validated_at": "2026-09-22T12:46:42.469800+00:00"
 }

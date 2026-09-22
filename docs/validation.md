@@ -80,6 +80,27 @@ python3 scripts/run_benchmarks.py eval --variant full
 python3 scripts/run_benchmarks.py bench
 ```
 
+The recorded first comparison was reduced at the user's request to a total
+30-minute measurement budget (including already completed measurements).
+It uses four performance cells: prompt 128, decode 128, thread 1, two warmups,
+five repetitions; accuracy uses only the existing smoke splits, jobs 4 and
+threads 3. Both FP32 reference probes passed again at threads 3 before scoring.
+The exact deadline, bounded commands and completion time are recorded in
+`manifests/measurement-plan.json`. Full splits and the complete performance
+matrix remain a later step.
+
+To format the recorded small comparison, run:
+
+```sh
+python3 scripts/render_results.py --scope small
+```
+
+After all three complete matrices have been run, `--scope full` formats those
+instead. The formatter requires complete coverage of its selected scope and
+matching executable hashes, verifies the runner's result seals, calls C
+`compare-results`, and writes delta JSONL/CSV plus `docs/results.md`. It formats
+recorded C metrics without recalculating their differences in Python.
+
 Evaluation defaults to all four configurations, thread 1, context 2048, chunk
 128. `--configurations`, `--tasks`, and evaluation-only `--jobs` select a subset
 or run independent accuracy jobs concurrently. Concurrent evaluation timing is

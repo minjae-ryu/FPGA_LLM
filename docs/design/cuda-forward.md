@@ -1,8 +1,10 @@
 # CUDA forward-only 전환 상세 계획
 
-작성일: 2026-09-23. 상태: **설계와 handoff만 완료, 구현·CUDA 실행 검증 미착수**.
+작성일: 2026-09-23. 업데이트: **C0/C1 구현**, 실행 결과는
+[Task 11](../tasks/11-cuda-bootstrap.md)과 [build manifest](../../manifests/cuda-build.json) 참조.
 현재 검증된 CPU 구현 기준은 `26ff391`이며 실제 엔진 소스 기준은 `134321d`다.
-이 문서의 새 API, 파일, Make target, CLI flag는 명시한 기존 항목 외에는 **구현 예정**이다.
+아래 내용은 원래 단계별 설계다. C0/C1 공개 API는 `include/sm_cuda.h`,
+빌드는 `make cuda`가 구현 기준이며, forward·trace·CLI는 계속 **구현 예정**이다.
 
 ## 1. 최신 요청과 작업 범위
 

@@ -1,9 +1,10 @@
 # SmolLM2 C numerical experiments
 
 Current work: [CUDA forward-only implementation plan](docs/design/cuda-forward.md).
-The CUDA backend is not implemented yet. Further benchmark/full evaluation work
-has been stopped at the user's request; the existing CPU results remain available.
-See [the current handoff](docs/HANDOFF.md) to resume at CUDA C0/C1.
+CUDA C0/C1 adds the optional C ABI library, model upload, and session ownership;
+GPU forward and CLI dispatch are still pending. Further benchmark/full evaluation
+work remains stopped. See [bootstrap instructions](docs/tasks/11-cuda-bootstrap.md)
+for the WSL GPU library path and [the current handoff](docs/HANDOFF.md) for next steps.
 
 A CPU C engine for SmolLM2-135M Base, comparing FP32, W8A8 GS64, and Q8 KV caches
 before future nonlinear-function approximations. The fixed model revision is

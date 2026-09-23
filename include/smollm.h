@@ -3,6 +3,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define SM_REVISION "93efa2f097d58c2a74874c7e644dbc9b0cee75a2"
 #define SM_GROUP 64
 typedef struct { char message[256]; } SmError;
@@ -90,4 +94,7 @@ uint32_t sm_argmax(const float *values, size_t count);
 /* Temperature zero is greedy; seeded stochastic sampling uses FP64 probabilities. */
 int sm_sample(const float *logits, size_t vocab, float temperature, uint64_t *rng,
                uint32_t *token, SmError *error);
+#ifdef __cplusplus
+}
+#endif
 #endif

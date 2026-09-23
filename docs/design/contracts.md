@@ -2,8 +2,8 @@
 
 Stage note (2026-09-23): the user authorized a CUDA forward-only successor and
 stopped further benchmarking/full evaluation. The [CUDA plan](cuda-forward.md)
-extends the implementation scope; its proposed interfaces are not implemented
-yet. This document remains the CPU binary, numerical and scoring baseline.
+extends the implementation scope; C0/C1 implements the separate CUDA model/session
+lifetime API, while GPU forward and CLI dispatch remain pending. This document remains the CPU binary, numerical and scoring baseline.
 
 ## Scope and numerical policy
 

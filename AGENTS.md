@@ -3,6 +3,17 @@
 All project skills and agent instructions live in this repository. Do not install
 or modify global skills, global agent settings, or a project `.codex` directory.
 
+## Current stage (2026-09-23)
+
+The user stopped further benchmarking/full evaluation and requested a CUDA
+forward-only transition. Read `docs/HANDOFF.md` and
+`docs/design/cuda-forward.md` before continuing. The current handoff contains
+a detailed plan, not an implemented CUDA backend. Start with C0/C1 and preserve
+the CPU baseline. Small correctness tests are required; do not resume the old
+performance matrix or full-split evaluation automatically. Earlier statements
+that CUDA is outside scope refer to the CPU stage and are superseded by this
+explicit user request. Other numerical and local-configuration rules still apply.
+
 ## Coordination
 
 - Orchestrator: `gpt-6-astra`, reasoning `max`, selected by the session owner.

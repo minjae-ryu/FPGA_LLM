@@ -1,0 +1,62 @@
+{
+  "observed_at_utc": "2026-09-23T02:13:05.719576+00:00",
+  "status": "metadata_only; CUDA execution and build not tested",
+  "gpu": {
+    "name": "NVIDIA GeForce RTX 4070 Ti",
+    "driver_version": "591.86",
+    "memory_total_mib": 12282,
+    "compute_capability": "8.9"
+  },
+  "nvcc": {
+    "path": "/usr/bin/nvcc",
+    "release": "11.5",
+    "version": "11.5.119",
+    "supported_gpu_code": [
+      "sm_35",
+      "sm_37",
+      "sm_50",
+      "sm_52",
+      "sm_53",
+      "sm_60",
+      "sm_61",
+      "sm_62",
+      "sm_70",
+      "sm_72",
+      "sm_75",
+      "sm_80",
+      "sm_86",
+      "sm_87"
+    ]
+  },
+  "nvidia_smi_path": "/usr/lib/wsl/lib/nvidia-smi",
+  "loader_entries": [
+    "/usr/lib/x86_64-linux-gnu/libcudart.so.11.0",
+    "/usr/lib/x86_64-linux-gnu/libcublas.so.11",
+    "/usr/lib/x86_64-linux-gnu/libcublasLt.so.11",
+    "/usr/lib/wsl/lib/libcuda.so.1",
+    "/usr/lib/x86_64-linux-gnu/libcuda.so.1"
+  ],
+  "commands": [
+    "command -v nvcc",
+    "command -v nvidia-smi",
+    "nvidia-smi --query-gpu=name,driver_version,memory.total,compute_cap --format=csv,noheader",
+    "nvcc --version",
+    "nvcc --list-gpu-code",
+    "ldconfig -p"
+  ],
+  "proposed_initial_codegen": [
+    "-gencode=arch=compute_86,code=sm_86",
+    "-gencode=arch=compute_86,code=compute_86"
+  ],
+  "unverified": [
+    "CUDA allocation and kernel launch",
+    "C to CUDA ABI linkage",
+    "cuBLAS execution and exact runtime version",
+    "Actual dynamic library resolution",
+    "CUDA numerical parity",
+    "Compute Sanitizer"
+  ],
+  "model_or_benchmark_execution_started": false,
+  "environment_changes": [],
+  "plan": "docs/design/cuda-forward.md"
+}

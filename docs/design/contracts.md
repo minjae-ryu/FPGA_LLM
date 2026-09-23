@@ -1,5 +1,10 @@
 # SmolLM2 C contracts (version 1)
 
+Stage note (2026-09-23): the user authorized a CUDA forward-only successor and
+stopped further benchmarking/full evaluation. The [CUDA plan](cuda-forward.md)
+extends the implementation scope; its proposed interfaces are not implemented
+yet. This document remains the CPU binary, numerical and scoring baseline.
+
 ## Scope and numerical policy
 
 Model `HuggingFaceTB/SmolLM2-135M`, revision

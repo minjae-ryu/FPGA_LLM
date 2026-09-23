@@ -1,5 +1,10 @@
 # SmolLM2 C numerical experiments
 
+Current work: [CUDA forward-only implementation plan](docs/design/cuda-forward.md).
+The CUDA backend is not implemented yet. Further benchmark/full evaluation work
+has been stopped at the user's request; the existing CPU results remain available.
+See [the current handoff](docs/HANDOFF.md) to resume at CUDA C0/C1.
+
 A CPU C engine for SmolLM2-135M Base, comparing FP32, W8A8 GS64, and Q8 KV caches
 before future nonlinear-function approximations. The fixed model revision is
 `93efa2f097d58c2a74874c7e644dbc9b0cee75a2`. Python prepares weights, data and HF

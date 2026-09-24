@@ -1,0 +1,26 @@
+{
+  "user_scope_date": "2026-09-24",
+  "recorded_at_utc": "2026-09-24T06:49:05.681827+00:00",
+  "cpu_baseline_commit": "26ff3914ae08ff955a33dfd195d30e37bda5f636",
+  "engine_source_commit": "134321d78ecec1ccdee0cdd3377b677030af7905",
+  "reverted_commits": [
+    "2201faf",
+    "2655aeb"
+  ],
+  "archive_branch": "archive/cuda-paused-2026-09-24",
+  "archive_commit": "2d5ab022278e7f15f97db081719b3eb83151a282",
+  "cuda_comparison_status": "interrupted; 5 of 6 cells saved; no process remained at rollback check",
+  "local_ignored_cuda_artifacts": "artifacts/cuda-paused-2026-09-24/",
+  "validation": {
+    "command": "make smollm check",
+    "passed": 143,
+    "seconds": 8.46,
+    "source_files_matched": 20,
+    "binary_sha256": "32c208d95e7d399d60c7f87981833331dc0514eef05451e33a68609028d1f85e",
+    "historical_binary_match": true
+  },
+  "new_model_benchmarks_or_full_evaluations_during_rollback": false,
+  "new_gpu_execution_during_rollback": false,
+  "history_rewritten": false,
+  "handoff": "docs/HANDOFF.md"
+}

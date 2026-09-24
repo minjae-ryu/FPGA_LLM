@@ -79,9 +79,9 @@ clean:
 SM_CFLAGS ?= -O3 -std=c11 -Wall -Wextra -Wpedantic -fno-fast-math -ffp-contract=off -fopenmp -march=native
 SM_CPPFLAGS = -Iinclude $(shell pkg-config --cflags openblas libpcre2-8) -DSM_BUILD_FLAGS='"$(SM_CFLAGS)"'
 SM_LIBS = $(shell pkg-config --libs openblas libpcre2-8) -lm -fopenmp
-SM_SOURCES = src/model.c src/session.c src/kernels.c src/cache.c src/math_ops.c src/scoring.c src/sampling.c src/cuda_stub.c
+SM_SOURCES = src/model.c src/session.c src/kernels.c src/cache.c src/math_ops.c src/scoring.c src/sampling.c
 SM_COMMANDS = src/cli_common.c src/main.c src/generate.c src/tokenizer.c src/evaluate.c src/benchmark.c src/replay.c src/compare_results.c
-SM_HEADERS = include/smollm.h include/sm_cuda.h src/internal.h
+SM_HEADERS = include/smollm.h src/internal.h
 PYTHON ?= python3
 
 build:
@@ -98,51 +98,3 @@ smollm: build/libsmollm.so build/smollm
 
 check: smollm
 	OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 $(PYTHON) -m pytest -q tests
-
-# Optional CUDA foundation. C CLI dispatch is a later milestone; this builds
-# the C ABI library, not a CLI claiming to execute CUDA forward.
-NVCC ?= nvcc
-CUDA_GENCODE ?= -gencode=arch=compute_86,code=sm_86 -gencode=arch=compute_86,code=compute_86
-CUDA_FLAGS ?= -O3 -std=c++14 --fmad=false --prec-div=true --prec-sqrt=true --ftz=false
-CUDA_COMPILE = $(NVCC) $(CUDA_FLAGS) $(CUDA_GENCODE) -Iinclude -Xcompiler=-fPIC,-Wall,-Wextra,-fno-fast-math,-ffp-contract=off
-CUDA_SOURCES = src/cuda/model.cu src/cuda/session.cu
-CUDA_OBJECTS = $(patsubst src/cuda/%.cu,build/cuda/%.o,$(CUDA_SOURCES))
-CUDA_C_OBJECTS = $(patsubst src/%.c,build/cuda/c/%.o,$(filter-out src/cuda_stub.c,$(SM_SOURCES)))
-
-build/cuda/%.o: src/cuda/%.cu src/cuda/internal.cuh include/sm_cuda.h include/smollm.h
-	mkdir -p $(@D)
-	$(CUDA_COMPILE) -c $< -o $@
-
-build/cuda/c/%.o: src/%.c $(SM_HEADERS)
-	mkdir -p $(@D)
-	$(CC) $(SM_CFLAGS) $(SM_CPPFLAGS) -fPIC -c $< -o $@
-
-build/libsmollm-cuda.so: $(CUDA_OBJECTS) $(CUDA_C_OBJECTS)
-	$(NVCC) -shared $^ -o $@ -lcublas $(filter-out -fopenmp,$(SM_LIBS)) -Xcompiler=-fopenmp
-
-build/cuda/bootstrap-c.o: tests/cuda_bootstrap.c include/smollm.h
-	mkdir -p $(@D)
-	$(CC) $(SM_CFLAGS) -Iinclude -c $< -o $@
-
-build/cuda/bootstrap.o: tests/cuda_bootstrap.cu src/cuda/internal.cuh include/sm_cuda.h include/smollm.h
-	mkdir -p $(@D)
-	$(CUDA_COMPILE) -c $< -o $@
-
-build/cuda-bootstrap: build/cuda/bootstrap-c.o build/cuda/bootstrap.o
-	$(NVCC) $^ -o $@ -lcublas
-
-.PHONY: cuda check-cuda
-cuda: build/libsmollm-cuda.so build/cuda-bootstrap
-check-cuda: smollm cuda build/cuda-lifecycle
-	CUDA_CACHE_PATH=$(CURDIR)/.cache/cuda OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 SM_TEST_CUDA=1 $(PYTHON) -m pytest -q tests/test_cuda.py
-
-build/cuda-test/%.o: src/cuda/%.cu src/cuda/internal.cuh include/sm_cuda.h include/smollm.h
-	mkdir -p $(@D)
-	$(CUDA_COMPILE) -DSM_CUDA_TESTING -c $< -o $@
-
-build/cuda-test/lifecycle.o: tests/cuda_lifecycle.cu src/cuda/internal.cuh include/sm_cuda.h include/smollm.h
-	mkdir -p $(@D)
-	$(CUDA_COMPILE) -DSM_CUDA_TESTING -c $< -o $@
-
-build/cuda-lifecycle: build/cuda-test/lifecycle.o build/cuda-test/model.o build/cuda-test/session.o build/cuda/c/model.o
-	$(NVCC) $^ -o $@ -lcublas

@@ -1,9 +1,8 @@
 # Reproduction and numerical gates
 
-Current stage: the user stopped further benchmarks/full evaluation and moved
-to CUDA forward implementation. The commands below document the CPU baseline;
-do not automatically execute the evaluation/performance matrices. Follow the
-[CUDA plan](design/cuda-forward.md) for small correctness gates in the new stage.
+Scope (2026-09-24): CPU baseline restored; CUDA is inactive. The commands below
+are reference procedures, not instructions to restart benchmarks/full evaluation.
+Read [the current handoff](HANDOFF.md) before starting new work.
 
 Run commands from the repository root. OpenBLAS and PCRE2 development packages,
 GCC, and a Python environment matching `requirements-smollm.txt` are required.

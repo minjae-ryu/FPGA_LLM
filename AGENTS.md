@@ -3,16 +3,15 @@
 All project skills and agent instructions live in this repository. Do not install
 or modify global skills, global agent settings, or a project `.codex` directory.
 
-## Current stage (2026-09-23)
+## Current scope (2026-09-24)
 
-The user stopped further benchmarking/full evaluation and requested a CUDA
-forward-only transition. Read `docs/HANDOFF.md` and
-`docs/design/cuda-forward.md` before continuing. C0/C1 now implements the optional CUDA C ABI, upload and session ownership;
-see `docs/tasks/11-cuda-bootstrap.md` for execution evidence and WSL GPU access.
-Continue at C2 and preserve the CPU baseline. Small correctness tests are required; do not resume the old
-performance matrix or full-split evaluation automatically. Earlier statements
-that CUDA is outside scope refer to the CPU stage and are superseded by this
-explicit user request. Other numerical and local-configuration rules still apply.
+The user set CUDA aside and requested restoration to the pre-CUDA CPU baseline.
+Runtime/build/scripts/tests now match `26ff391` (engine source `134321d`).
+Read `docs/HANDOFF.md` and `docs/tasks/13-restore-cpu.md`. CUDA work is preserved
+only on `archive/cuda-paused-2026-09-24` and is not the active task. Do not resume
+CUDA implementation, the incomplete CPU/GPU comparison, or full evaluation /
+performance matrices without a new user request. The next CPU/FPGA objective
+has not been assigned. Preserve the CPU numerical contracts below.
 
 ## Coordination
 

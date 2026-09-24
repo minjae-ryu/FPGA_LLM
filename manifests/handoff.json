@@ -1,10 +1,11 @@
 {
-  "updated_at_utc": "2026-09-23T02:47:25.687143+00:00",
+  "updated_at_utc": "2026-09-24T06:49:05.681827+00:00",
   "workspace": "/home/rmj/FPGA_LLM/llama2.c",
-  "latest_full_suite": "144 passed, 4 CUDA tests skipped in 8.68s",
-  "current_binary_sha256": "6b6027cd36ca81f458f37742b60680142e45ddd759ca30258802a0cbe7a575c4",
+  "source_commit": "134321d78ecec1ccdee0cdd3377b677030af7905",
+  "latest_full_suite": "143 passed in 8.46s (fresh CPU rebuild)",
+  "current_binary_sha256": "32c208d95e7d399d60c7f87981833331dc0514eef05451e33a68609028d1f85e",
   "numerical_matrix_binary_sha256": "32c208d95e7d399d60c7f87981833331dc0514eef05451e33a68609028d1f85e",
-  "latest_user_scope": "Implement CUDA C0/C1 without additional benchmarks/full evaluation; resolve GPU access first.",
+  "latest_user_scope": "Set CUDA aside; restore pre-CUDA CPU Git state and document handoff.",
   "measurement_status": "completed_small_scope",
   "measurement_conservative_elapsed_seconds": 1113.121011,
   "completed": {
@@ -22,24 +23,25 @@
   },
   "long_running_processes_started_by_this_session": [],
   "pending": [
-    "CUDA C2-C6 implementation and correctness validation",
-    "Compute Sanitizer execution remains unavailable"
+    "Next CPU/FPGA objective is not yet specified."
   ],
-  "git_status_note": "Use git status/log for integration commit; cuda-build.json records current build hashes; CPU numerical matrix hashes are historical.",
+  "git_status_note": "HEAD retains history via revert; runtime/build/scripts/tests match 26ff391; only current-scope docs/manifests differ.",
   "report": "docs/results.md",
-  "active_task": "CUDA FP32 forward-only backend",
-  "status": "C0/C1 implemented; CPU suite and CUDA correctness suite passed; sanitizer unavailable",
-  "plan": "docs/design/cuda-forward.md",
-  "cuda_environment": "manifests/cuda-environment.json",
+  "user_scope_date": "2026-09-24",
+  "active_task": "CPU baseline restored; await next CPU/FPGA task",
+  "status": "CPU rollback and handoff complete",
+  "cpu_restore_target": "26ff391",
+  "cuda_status": "paused by user; do not resume automatically",
+  "cuda_archive_branch": "archive/cuda-paused-2026-09-24",
+  "cuda_archive_commit": "2d5ab02",
+  "deferred_work": [
+    "CUDA implementation and incomplete comparison",
+    "Full evaluation splits",
+    "Remaining old CPU performance matrix"
+  ],
   "next_steps": [
-    "C2: independent linear and elementwise GPU kernels",
-    "C3-C6: cache/attention, full forward, CLI dispatch, numerical gates",
-    "Do not resume benchmark/full evaluation"
+    "Read docs/HANDOFF.md; inspect git status/log",
+    "Proceed only with the next user-assigned CPU/FPGA task"
   ],
-  "deferred_cpu_work": [
-    "Remaining 24-cell performance matrix conditions",
-    "Full evaluation splits"
-  ],
-  "cpu_baseline_source_commit": "134321d78ecec1ccdee0cdd3377b677030af7905",
-  "cuda_build": "manifests/cuda-build.json"
+  "restore_record": "manifests/cpu-restore.json"
 }

@@ -25,7 +25,11 @@ struct SmCudaSession {
     cudaStream_t stream;
     cublasHandle_t blas;
     size_t context, chunk, position, kv_bytes, scratch_bytes;
-    bool failed;
+    bool failed, busy;
+    size_t logit_capacity;
+    float *logits, *host_logits;
+    SmTraceCallback trace;
+    void *trace_ctx;
     float *k, *v;
     void *scratch;
     uint32_t *tokens;
@@ -76,4 +80,15 @@ inline int smcu_checkpoint(SmError *) { return 0; }
 #endif
 #define SMCU_CUDA(expr) (smcu_checkpoint(error) || smcu_cuda((expr),#expr,error))
 #define SMCU_BLAS(expr) (smcu_checkpoint(error) || smcu_blas((expr),#expr,error))
+int smcu_linear(SmCudaSession *,const float *,const float *,float *,int,int,int,SmError *);
+int smcu_precise_projection(SmCudaSession *,const float *,const float *,float *,int,int,int,SmError *);
+int smcu_embedding(SmCudaSession *,size_t,SmError *);
+int smcu_norm(SmCudaSession *,float *,const float *,const float *,size_t,SmError *);
+int smcu_rope(SmCudaSession *,float *,size_t,int,SmError *);
+int smcu_silu(SmCudaSession *,size_t,SmError *);
+int smcu_multiply(SmCudaSession *,size_t,SmError *);
+int smcu_residual(SmCudaSession *,size_t,int,SmError *);
+int smcu_finite_logits(SmCudaSession *,size_t,size_t,SmError *);
+int smcu_attention(SmCudaSession *,size_t,int,SmError *);
+int smcu_trace(SmCudaSession *,const char *,int,int,size_t,size_t,size_t,int,size_t,const float *,const float *,SmError *);
 #endif

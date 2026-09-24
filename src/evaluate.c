@@ -158,15 +158,15 @@ static int score_callback(void *opaque,size_t position,const float *logits,size_
 }
 
 static int score_record(SmRun *run,const EvalRecord *record,RecordScore *score) {
-    sm_session_reset(run->session);
+    if(sm_run_reset(run)) return -1;
     size_t prefix=record->score_start-1;
-    if (prefix && sm_prefill(run->session,record->tokens,prefix,SM_LOGITS_NONE,NULL,NULL,&run->error)) return -1;
+    if (prefix && sm_run_prefill(run,record->tokens,prefix,SM_LOGITS_NONE,NULL,NULL,&run->error)) return -1;
     ScoreContext context={record,prefix,0,0,&run->error};
     size_t count=record->score_end-record->score_start;
-    if (sm_prefill(run->session,record->tokens+prefix,count,SM_LOGITS_ALL,
+    if (sm_run_prefill(run,record->tokens+prefix,count,SM_LOGITS_ALL,
                    score_callback,&context,&run->error)) return -1;
     if (context.callbacks!=count || context.next_position!=record->score_end-1 ||
-        sm_session_position(run->session)!=record->score_end-1)
+        sm_run_position(run)!=record->score_end-1)
         return sm_error(&run->error,"record scoring callback count is inconsistent");
     score->nll=context.nll;score->loglikelihood=-context.nll;
     size_t denominator=record->norm_chars ? record->norm_chars:count;
@@ -233,8 +233,8 @@ static void print_common(const SmRun *run,const char *data_path,const char *mani
            "\"scratch_bytes\":%zu,\"peak_rss_kib\":%ld",
            data->kind==SM_EVAL_LM?"lm":"multiple_choice",data->record_count,data->target_count,
            data->token_count,seconds,run->load_seconds,seconds>0?data->target_count/seconds:0,
-           sm_model_bytes(run->model),sm_session_kv_bytes(run->session),
-           sm_session_scratch_bytes(run->session),sm_peak_rss_kib());
+           sm_model_bytes(run->model),sm_run_kv_bytes(run),
+           sm_run_scratch_bytes(run),sm_peak_rss_kib());
 }
 
 int sm_command_eval(int argc,char **argv) {

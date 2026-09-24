@@ -1,10 +1,15 @@
 # CUDA forward-only 전환 상세 계획
 
-작성일: 2026-09-23. 업데이트: **C0/C1 구현**, 실행 결과는
-[Task 11](../tasks/11-cuda-bootstrap.md)과 [build manifest](../../manifests/cuda-build.json) 참조.
-현재 검증된 CPU 구현 기준은 `26ff391`이며 실제 엔진 소스 기준은 `134321d`다.
-아래 내용은 원래 단계별 설계다. C0/C1 공개 API는 `include/sm_cuda.h`,
-빌드는 `make cuda`가 구현 기준이며, forward·trace·CLI는 계속 **구현 예정**이다.
+작성일: 2026-09-23. 현재 **FP32 CUDA forward·CLI 구현 및 정확성 gate 통과**.
+사용자가 전체 forward 검증 후 제한된 CPU/GPU 속도 비교를 추가 승인했다.
+[Task 12](../tasks/12-cuda-forward-comparison.md)와 [결과](../cuda-results.md)가 현재 구현·검증 기준이다.
+아래 내용은 원래 단계별 설계이며, 계획 시점의 “벤치마크 중단” 지시는 이번 제한 비교에 한해 갱신됐다.
+전체 평가·이전 양자화 성능 matrix는 여전히 자동 실행하지 않는다.
+
+현재 차이: Q/K projection은 정확성 gate를 위해 FP32 보상 누적을 사용하고,
+다른 linear와 attention QK/PV는 cuBLAS를 사용한다. trace는 tensor site를 지원하며
+CPU MathOps scalar replay site는 내보내지 않는다. 설치된 sanitizer의 실행 불가로
+C6 메모리 계측 검증은 미확인이다. 공개 API는 `include/sm_cuda.h`를 따른다.
 
 ## 1. 최신 요청과 작업 범위
 

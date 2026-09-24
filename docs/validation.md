@@ -1,9 +1,9 @@
 # Reproduction and numerical gates
 
-Current stage: the user stopped further benchmarks/full evaluation and moved
-to CUDA forward implementation. The commands below document the CPU baseline;
-do not automatically execute the evaluation/performance matrices. Follow the
-[CUDA plan](design/cuda-forward.md) for small correctness gates in the new stage.
+Current stage: FP32 CUDA forward and a user-authorized bounded CPU/GPU speed
+comparison. See [CUDA validation and results](tasks/12-cuda-forward-comparison.md).
+The commands below document the CPU baseline; do not automatically execute the
+full evaluation/performance matrices.
 
 Run commands from the repository root. OpenBLAS and PCRE2 development packages,
 GCC, and a Python environment matching `requirements-smollm.txt` are required.

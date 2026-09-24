@@ -67,12 +67,14 @@ void sm_cuda_session_free(SmCudaSession *s) {
         if (s->k) cudaFree(s->k);
         if (s->v) cudaFree(s->v);
         if (s->scratch) cudaFree(s->scratch);
+        if (s->logits) cudaFree(s->logits);
         if (s->stream) cudaStreamDestroy(s->stream);
     }
-    free(s);
+    free(s->host_logits); free(s);
 }
 int sm_cuda_session_reset(SmCudaSession *s, SmError *error) {
     if (!s) return smcu_error(error,"CUDA session is NULL");
+    if (s->busy) return smcu_error(error,"CUDA session is busy");
     s->failed=true;
     SmCudaDeviceGuard guard;
     if (guard.select(s->model->device,error) ||

@@ -99,13 +99,12 @@ smollm: build/libsmollm.so build/smollm
 check: smollm
 	OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 $(PYTHON) -m pytest -q tests
 
-# Optional CUDA foundation. C CLI dispatch is a later milestone; this builds
-# the C ABI library, not a CLI claiming to execute CUDA forward.
+# Optional FP32 CUDA backend; existing CPU/legacy targets stay independent.
 NVCC ?= nvcc
 CUDA_GENCODE ?= -gencode=arch=compute_86,code=sm_86 -gencode=arch=compute_86,code=compute_86
 CUDA_FLAGS ?= -O3 -std=c++14 --fmad=false --prec-div=true --prec-sqrt=true --ftz=false
 CUDA_COMPILE = $(NVCC) $(CUDA_FLAGS) $(CUDA_GENCODE) -Iinclude -Xcompiler=-fPIC,-Wall,-Wextra,-fno-fast-math,-ffp-contract=off
-CUDA_SOURCES = src/cuda/model.cu src/cuda/session.cu
+CUDA_SOURCES = src/cuda/model.cu src/cuda/session.cu src/cuda/linear.cu src/cuda/elementwise.cu src/cuda/attention.cu src/cuda/forward.cu
 CUDA_OBJECTS = $(patsubst src/cuda/%.cu,build/cuda/%.o,$(CUDA_SOURCES))
 CUDA_C_OBJECTS = $(patsubst src/%.c,build/cuda/c/%.o,$(filter-out src/cuda_stub.c,$(SM_SOURCES)))
 
@@ -113,9 +112,9 @@ build/cuda/%.o: src/cuda/%.cu src/cuda/internal.cuh include/sm_cuda.h include/sm
 	mkdir -p $(@D)
 	$(CUDA_COMPILE) -c $< -o $@
 
-build/cuda/c/%.o: src/%.c $(SM_HEADERS)
+build/cuda/c/%.o: src/%.c $(SM_HEADERS) include/sm_cli.h include/sm_tokenizer.h
 	mkdir -p $(@D)
-	$(CC) $(SM_CFLAGS) $(SM_CPPFLAGS) -fPIC -c $< -o $@
+	$(CC) $(SM_CFLAGS) $(SM_CPPFLAGS) -DSM_WITH_CUDA -DSM_CUDA_BUILD_FLAGS='"$(CUDA_FLAGS) $(CUDA_GENCODE)"' -fPIC -c $< -o $@
 
 build/libsmollm-cuda.so: $(CUDA_OBJECTS) $(CUDA_C_OBJECTS)
 	$(NVCC) -shared $^ -o $@ -lcublas $(filter-out -fopenmp,$(SM_LIBS)) -Xcompiler=-fopenmp
@@ -132,9 +131,9 @@ build/cuda-bootstrap: build/cuda/bootstrap-c.o build/cuda/bootstrap.o
 	$(NVCC) $^ -o $@ -lcublas
 
 .PHONY: cuda check-cuda
-cuda: build/libsmollm-cuda.so build/cuda-bootstrap
+cuda: build/libsmollm-cuda.so build/cuda-bootstrap build/smollm-cuda
 check-cuda: smollm cuda build/cuda-lifecycle
-	CUDA_CACHE_PATH=$(CURDIR)/.cache/cuda OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 SM_TEST_CUDA=1 $(PYTHON) -m pytest -q tests/test_cuda.py
+	CUDA_CACHE_PATH=$(CURDIR)/.cache/cuda OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 SM_TEST_CUDA=1 $(PYTHON) -m pytest -q tests/test_cuda.py tests/test_cuda_forward.py
 
 build/cuda-test/%.o: src/cuda/%.cu src/cuda/internal.cuh include/sm_cuda.h include/smollm.h
 	mkdir -p $(@D)
@@ -144,5 +143,15 @@ build/cuda-test/lifecycle.o: tests/cuda_lifecycle.cu src/cuda/internal.cuh inclu
 	mkdir -p $(@D)
 	$(CUDA_COMPILE) -DSM_CUDA_TESTING -c $< -o $@
 
-build/cuda-lifecycle: build/cuda-test/lifecycle.o build/cuda-test/model.o build/cuda-test/session.o build/cuda/c/model.o
+build/cuda-lifecycle: build/cuda-test/lifecycle.o build/cuda-test/model.o build/cuda-test/session.o build/cuda/c/model.o build/cuda/linear.o build/cuda/elementwise.o build/cuda/attention.o build/cuda/forward.o
 	$(NVCC) $^ -o $@ -lcublas
+
+CUDA_COMMAND_OBJECTS = $(patsubst src/%.c,build/cuda/c/%.o,$(SM_COMMANDS))
+.PHONY: smollm-cuda
+smollm-cuda: build/smollm-cuda
+build/smollm-cuda: $(CUDA_OBJECTS) $(CUDA_C_OBJECTS) $(CUDA_COMMAND_OBJECTS)
+	$(NVCC) $^ -o $@ -lcublas $(filter-out -fopenmp,$(SM_LIBS)) -Xcompiler=-fopenmp
+
+.PHONY: check-cuda-forward
+check-cuda-forward: smollm cuda build/cuda-lifecycle
+	CUDA_CACHE_PATH=$(CURDIR)/.cache/cuda OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 SM_TEST_CUDA=1 $(PYTHON) -m pytest -q tests/test_cuda.py tests/test_cuda_forward.py -k 'not c_abi_kernel_cublas'

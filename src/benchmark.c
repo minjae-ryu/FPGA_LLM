@@ -22,17 +22,22 @@ static void print_samples(const char *name,const Timing *timings,size_t count,in
     }
     putchar(']');
 }
+/* Force LAST logits to host on both backends, as generation/scoring require. */
+static int receive_logits(void *ctx,size_t pos,const float *logits,size_t vocab) {
+    (void)pos;(void)vocab; *(volatile float *)ctx=logits[0]; return 0;
+}
 static int run_once(SmRun *run,const uint32_t *prompt,size_t prompt_count,
                     uint32_t decode_token,size_t decode_count,Timing *timing) {
-    sm_session_reset(run->session);
+    if(sm_run_reset(run)) return -1;
+    volatile float first_logit=0;
     double start=sm_time();
-    if(sm_prefill(run->session,prompt,prompt_count,SM_LOGITS_LAST,NULL,NULL,&run->error))return -1;
+    if(sm_run_prefill(run,prompt,prompt_count,SM_LOGITS_LAST,receive_logits,(void *)&first_logit,&run->error))return -1;
     timing->prefill=sm_time()-start;
     start=sm_time();
     for(size_t i=0;i<decode_count;i++)
-        if(sm_decode(run->session,decode_token,SM_LOGITS_LAST,NULL,NULL,&run->error))return -1;
+        if(sm_run_decode(run,decode_token,SM_LOGITS_LAST,receive_logits,(void *)&first_logit,&run->error))return -1;
     timing->decode=sm_time()-start;
-    if(sm_session_position(run->session)!=prompt_count+decode_count)
+    if(sm_run_position(run)!=prompt_count+decode_count)
         return sm_error(&run->error,"benchmark session position is inconsistent");
     if(!isfinite(timing->prefill)||timing->prefill<=0 ||
        !isfinite(timing->decode)||timing->decode<=0)
@@ -73,15 +78,15 @@ int sm_command_bench(int argc,char **argv) {
     printf("{");sm_run_metadata(stdout,&run);
     printf(",\"command\":\"bench\",\"prompt_tokens\":%zu,\"decode_tokens\":%zu,"
            "\"warmup_repetitions\":%zu,\"measured_repetitions\":%zu,"
-           "\"token_source\":\"deterministic_mod_vocab_v1\",\"decode_token\":%u,"
+           "\"logit_delivery\":\"host_last_row\",\"token_source\":\"deterministic_mod_vocab_v1\",\"decode_token\":%u,"
            "\"load_seconds\":%.9g,\"median_ttft_seconds\":%.9g,"
            "\"median_prefill_seconds\":%.9g,\"median_decode_seconds\":%.9g,"
            "\"prefill_tokens_per_second\":%.9g,\"decode_tokens_per_second\":%.9g,"
            "\"model_bytes\":%zu,\"kv_bytes\":%zu,\"scratch_bytes\":%zu,\"peak_rss_kib\":%ld",
            prompt,decode,warmup,repetitions,decode_token,run.load_seconds,median_prefill,
            median_prefill,median_decode,prompt/median_prefill,decode/median_decode,
-           sm_model_bytes(run.model),sm_session_kv_bytes(run.session),
-           sm_session_scratch_bytes(run.session),sm_peak_rss_kib());
+           sm_model_bytes(run.model),sm_run_kv_bytes(&run),
+           sm_run_scratch_bytes(&run),sm_peak_rss_kib());
     print_samples("prefill_seconds",timings,repetitions,0);
     print_samples("decode_seconds",timings,repetitions,1);printf("}\n");
     status=0;

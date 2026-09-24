@@ -92,7 +92,28 @@ int main(int argc, char **argv) {
     CUDA(cudaMemcpy(canary.data(),b->v,canary.size(),cudaMemcpyDeviceToHost));
     for (unsigned char x:canary) REQUIRE(x==0x41);
     REQUIRE(sm_cuda_session_reset(b,&error)==0);
-    sm_cuda_session_free(b); sm_cuda_model_free(m);
+    sm_cuda_session_free(b);
+    // NONE must still detect nonfinite residuals; LAST must validate even with no callback.
+    REQUIRE(sm_cuda_session_create(m,SM_KV_F32,8,4,&a,&error)==0);
+    float original=0,bad=NAN;
+    CUDA(cudaMemcpy(&original,m->weights[0].data,4,cudaMemcpyDeviceToHost));
+    CUDA(cudaMemcpy(m->weights[0].data,&bad,4,cudaMemcpyHostToDevice));
+    REQUIRE(sm_cuda_decode(a,0,SM_LOGITS_NONE,NULL,NULL,&error)==-1);
+    REQUIRE(strstr(error.message,"nonfinite residual") && a->position==0 && a->failed);
+    REQUIRE(sm_cuda_decode(a,0,SM_LOGITS_NONE,NULL,NULL,&error)==-1);
+    CUDA(cudaMemcpy(m->weights[0].data,&original,4,cudaMemcpyHostToDevice));
+    REQUIRE(sm_cuda_session_reset(a,&error)==0);
+    float *last=m->weights[0].data+(size_t)(c.vocab-1)*c.dim;
+    CUDA(cudaMemcpy(&original,last,4,cudaMemcpyDeviceToHost));
+    CUDA(cudaMemcpy(last,&bad,4,cudaMemcpyHostToDevice));
+    REQUIRE(sm_cuda_decode(a,0,SM_LOGITS_NONE,NULL,NULL,&error)==0);
+    REQUIRE(sm_cuda_session_reset(a,&error)==0);
+    REQUIRE(sm_cuda_decode(a,0,SM_LOGITS_LAST,NULL,NULL,&error)==-1);
+    REQUIRE(strstr(error.message,"nonfinite logits") && a->position==0);
+    CUDA(cudaMemcpy(last,&original,4,cudaMemcpyHostToDevice));
+    REQUIRE(sm_cuda_session_reset(a,&error)==0);
+    REQUIRE(sm_cuda_decode(a,0,SM_LOGITS_LAST,NULL,NULL,&error)==0);
+    sm_cuda_session_free(a); sm_cuda_model_free(m);
     sm_cuda_session_free(NULL); sm_cuda_model_free(NULL);
     REQUIRE(sm_cuda_session_reset(NULL,&error)==-1);
     // Overflow helpers cover sizes unreachable with the validated tiny model.

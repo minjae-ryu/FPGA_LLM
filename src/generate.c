@@ -28,14 +28,14 @@ int sm_command_generate(int argc,char **argv) {
     if(token_count>r.context || (steps && steps-1>r.context-token_count)) {sm_error(&r.error,"generation exceeds context capacity");goto done;}
     SampleState sample={temp,(uint64_t)seed,0,&r.error};
     double start=sm_time();
-    if(steps && sm_prefill(r.session,tokens,token_count,SM_LOGITS_LAST,choose,&sample,&r.error))goto done;
+    if(steps && sm_run_prefill(&r,tokens,token_count,SM_LOGITS_LAST,choose,&sample,&r.error))goto done;
     for(size_t i=0;i<steps;i++) {
         if(sample.token==0)break;
         uint8_t *bytes=NULL;size_t length=0;
         if(sm_tokenizer_decode_token(tokenizer,sample.token,&bytes,&length,r.error.message,sizeof(r.error.message)))goto done;
         if(fwrite(bytes,1,length,stdout)!=length) {sm_tokenizer_buffer_free(bytes);sm_error(&r.error,"output write failed");goto done;}
         sm_tokenizer_buffer_free(bytes);
-        if(i+1<steps && sm_decode(r.session,sample.token,SM_LOGITS_LAST,choose,&sample,&r.error))goto done;
+        if(i+1<steps && sm_run_decode(&r,sample.token,SM_LOGITS_LAST,choose,&sample,&r.error))goto done;
     }
     putchar('\n');
     fprintf(stderr,"generation_seconds=%.6f prompt_tokens=%zu\n",sm_time()-start,token_count);

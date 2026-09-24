@@ -16,3 +16,12 @@ int sm_cuda_session_reset(SmCudaSession *s, SmError *e) { (void)s; return unavai
 size_t sm_cuda_session_position(const SmCudaSession *s) { (void)s; return 0; }
 size_t sm_cuda_session_kv_bytes(const SmCudaSession *s) { (void)s; return 0; }
 size_t sm_cuda_session_scratch_bytes(const SmCudaSession *s) { (void)s; return 0; }
+int sm_cuda_prefill(SmCudaSession *s,const uint32_t *t,size_t n,SmLogits mode,SmLogitCallback cb,void *ctx,SmError *e) {
+    (void)s;(void)t;(void)n;(void)mode;(void)cb;(void)ctx;return unavailable(e);
+}
+int sm_cuda_decode(SmCudaSession *s,uint32_t t,SmLogits mode,SmLogitCallback cb,void *ctx,SmError *e) {
+    (void)s;(void)t;(void)mode;(void)cb;(void)ctx;return unavailable(e);
+}
+int sm_cuda_session_set_trace(SmCudaSession *s,SmTraceCallback cb,void *ctx,SmError *e) {
+    (void)s;(void)cb;(void)ctx;return unavailable(e);
+}

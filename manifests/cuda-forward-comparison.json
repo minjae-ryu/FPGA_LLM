@@ -1,0 +1,24 @@
+{
+  "updated_at_utc": "2026-09-23T03:14:03.185580+00:00",
+  "hashes": {
+    "build/smollm-cuda": "9b7b138e20e81cc706e3f081b444634b5fbcfade8db9be32a00e9b25ee421e14",
+    "models/smollm2-f32.bin": "2d2367f33b1e87706b959fa8ec1de4b3d04572c5d5bad9b0fd6ecbd905fc7849",
+    "artifacts/reference/probe.tokens": "88d223f9f600a238e541743196efb0eadd156c4ab5c812df958a823aadf39216",
+    "artifacts/reference/probe.logits": "6ba6cb197a8be66f49526e2f37e0aec63e96de2f09d5d93bec37feaec045d2da",
+    "artifacts/reference/long.tokens": "9da1f7ccc3bf03b9b09784abb26fccf5c35e46ae57149908becbf0c6091cca93",
+    "artifacts/reference/long.logits": "15bee88c6399fa88ae9b98c052832721ae69ece2650b6ae4c49c0f6b030e6472"
+  },
+  "correctness": "passed",
+  "correctness_sha256": "3a9a28c5466a962286896ff2fee1b663bbb6dd192fdc3e000e6a7cce7ee2de52",
+  "scope": "FP32 weights/KV; six benchmark cells; no full evaluation or quantized matrix",
+  "benchmark_status": "interrupted; user paused CUDA and requested CPU rollback",
+  "environment": {
+    "LD_LIBRARY_PATH": "/usr/lib/wsl/lib",
+    "CUDA_CACHE_PATH": "/home/rmj/FPGA_LLM/llama2.c/.cache/cuda"
+  },
+  "completed_cells": 5,
+  "planned_cells": 6,
+  "user_scope_date": "2026-09-24",
+  "active_processes_observed": [],
+  "archive_only": true
+}

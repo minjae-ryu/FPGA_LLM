@@ -1,9 +1,11 @@
 # SmolLM2 C contracts (version 1)
 
-Stage note (2026-09-23): the user authorized a CUDA forward-only successor and
-stopped further benchmarking/full evaluation. The [CUDA plan](cuda-forward.md)
-extends the implementation scope; C0/C1 implements the separate CUDA model/session
-lifetime API, while GPU forward and CLI dispatch remain pending. This document remains the CPU binary, numerical and scoring baseline.
+Stage note (2026-09-23): the user authorized CUDA forward and a bounded CPU/GPU
+speed comparison after correctness checks. The [CUDA plan](cuda-forward.md)
+extends this CPU baseline. FP32 CUDA uses the same formats, tolerances and C
+scoring; it has a separate device Model/Session ABI. Sensitive Q/K projections
+use compensated binary32 accumulation; other GEMMs use pedantic cuBLAS. No
+quantized CUDA or full evaluation is included in this comparison.
 
 ## Scope and numerical policy
 

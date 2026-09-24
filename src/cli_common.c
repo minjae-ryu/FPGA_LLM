@@ -28,7 +28,7 @@ int sm_flag(int argc,char **argv,const char *key) {
     return 0;
 }
 int sm_validate_options(int argc,char **argv,const char *const *extra,size_t count) {
-    static const char *common[]={"--model","--kv","--context","--chunk","--threads"};
+    static const char *common[]={"--model","--kv","--context","--chunk","--threads","--backend","--device"};
     for(int i=2;i<argc;) {
         int known=0;
         for(size_t j=0;j<sizeof(common)/sizeof(common[0]);j++)if(!strcmp(argv[i],common[j]))known=1;
@@ -57,7 +57,16 @@ long sm_peak_rss_kib(void) { struct rusage r;return getrusage(RUSAGE_SELF,&r) ? 
 int sm_run_open(SmRun *r,int argc,char **argv) {
     memset(r,0,sizeof(*r));
     r->model_path=sm_option(argc,argv,"--model",NULL);
-    size_t threads;
+    size_t threads,device;
+    const char *backend=sm_option(argc,argv,"--backend","cpu");
+    if(!backend || (strcmp(backend,"cpu") && strcmp(backend,"cuda")) ||
+       sm_size_option(argc,argv,"--device",0,&device) || device>INT_MAX)
+        return sm_error(&r->error,"invalid --backend or --device");
+    r->cuda=!strcmp(backend,"cuda"); r->device=(int)device;
+    if(!r->cuda && sm_flag(argc,argv,"--device")) return sm_error(&r->error,"--device requires --backend cuda");
+#ifndef SM_WITH_CUDA
+    if(r->cuda) return sm_error(&r->error,"CUDA backend not built (CPU-only build)");
+#endif
     const char *kv=sm_option(argc,argv,"--kv","f32");
     if (!r->model_path || !kv || (strcmp(kv,"f32") && strcmp(kv,"q8")) ||
         sm_size_option(argc,argv,"--context",0,&r->context) ||
@@ -71,12 +80,39 @@ int sm_run_open(SmRun *r,int argc,char **argv) {
     r->load_seconds=sm_time()-start;
     if (!r->context) r->context=sm_model_config(r->model)->max_context;
     if (r->chunk>r->context) { sm_error(&r->error,"chunk exceeds context");sm_run_close(r);return -1; }
-    if (sm_session_create(r->model,r->kv,r->context,r->chunk,&r->session,&r->error)) {
-        sm_run_close(r);return -1;
+#ifdef SM_WITH_CUDA
+    if(r->cuda) {
+        if(r->kv!=SM_KV_F32 || sm_model_dtype(r->model)!=SM_F32) {
+            sm_error(&r->error,"CUDA requires FP32 weights and KV");sm_run_close(r);return -1;
+        }
+        start=sm_time();
+        if(sm_cuda_model_create(r->model,r->device,&r->cuda_model,&r->error)) {sm_run_close(r);return -1;}
+        r->upload_seconds=sm_time()-start;
     }
+#endif
+    start=sm_time();
+    if(sm_run_create_session(r,r->chunk)) {sm_run_close(r);return -1;}
+    r->setup_seconds=sm_time()-start;
     return 0;
 }
-void sm_run_close(SmRun *r) { sm_session_free(r->session);sm_model_free(r->model);r->session=NULL;r->model=NULL; }
+int sm_run_create_session(SmRun *r,size_t chunk) {
+    r->chunk=chunk;
+#ifdef SM_WITH_CUDA
+    if(r->cuda) {
+        sm_cuda_session_free(r->cuda_session);r->cuda_session=NULL;
+        return sm_cuda_session_create(r->cuda_model,r->kv,r->context,chunk,&r->cuda_session,&r->error);
+    }
+#endif
+    sm_session_free(r->session);r->session=NULL;
+    return sm_session_create(r->model,r->kv,r->context,chunk,&r->session,&r->error);
+}
+void sm_run_close(SmRun *r) {
+#ifdef SM_WITH_CUDA
+    sm_cuda_session_free(r->cuda_session);sm_cuda_model_free(r->cuda_model);
+    r->cuda_session=NULL;r->cuda_model=NULL;
+#endif
+    sm_session_free(r->session);sm_model_free(r->model);r->session=NULL;r->model=NULL;
+}
 int sm_read_tokens(const char *path,uint32_t **tokens,size_t *count,SmError *e) {
     *tokens=NULL;*count=0;
     if (!path) return sm_error(e,"missing --tokens path");
@@ -102,6 +138,14 @@ void sm_json_string(FILE *f,const char *s) {
 }
 void sm_run_metadata(FILE *f,const SmRun *r) {
     const SmConfig *c=sm_model_config(r->model);
+    fprintf(f,"\"backend\":\"%s\",\"device\":%d,\"upload_seconds\":%.9g,\"session_setup_seconds\":%.9g,",
+        r->cuda ? "cuda":"cpu",r->cuda ? r->device:-1,r->upload_seconds,r->setup_seconds);
+#ifdef SM_WITH_CUDA
+    if(r->cuda) {
+        fprintf(f,"\"device_weight_bytes\":%zu,\"cuda_math\":\"FP32_PEDANTIC\",\"cuda_build_flags\":",sm_cuda_model_weight_bytes(r->cuda_model));
+        sm_json_string(f,SM_CUDA_BUILD_FLAGS);fputc(',',f);
+    }
+#endif
     fprintf(f,"\"model_revision\":\"%s\",\"model_path\":",c->revision);sm_json_string(f,r->model_path);
     fprintf(f,",\"linear\":\"%s\",\"kv\":\"%s\",\"threads\":%d,\"chunk\":%zu,\"context\":%zu,",
             sm_model_dtype(r->model)==SM_Q8 ? "w8a8_gs64":"fp32",r->kv==SM_KV_Q8 ? "q8_gs64":"fp32",

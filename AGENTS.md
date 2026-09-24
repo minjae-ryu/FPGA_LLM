@@ -5,14 +5,15 @@ or modify global skills, global agent settings, or a project `.codex` directory.
 
 ## Current stage (2026-09-23)
 
-The user stopped further benchmarking/full evaluation and requested a CUDA
-forward-only transition. Read `docs/HANDOFF.md` and
-`docs/design/cuda-forward.md` before continuing. C0/C1 now implements the optional CUDA C ABI, upload and session ownership;
-see `docs/tasks/11-cuda-bootstrap.md` for execution evidence and WSL GPU access.
-Continue at C2 and preserve the CPU baseline. Small correctness tests are required; do not resume the old
-performance matrix or full-split evaluation automatically. Earlier statements
-that CUDA is outside scope refer to the CPU stage and are superseded by this
-explicit user request. Other numerical and local-configuration rules still apply.
+The user authorized completing FP32 CUDA forward and a bounded CPU/CUDA speed
+comparison after correctness gates. Read `docs/HANDOFF.md`,
+`docs/tasks/12-cuda-forward-comparison.md` and `docs/design/cuda-forward.md`.
+The initial forward and C CLI dispatch are implemented. Keep FP32 numerical
+contracts; do not automatically resume full evaluation or the old quantized
+performance matrix. WSL GPU execution requires host device access and
+`LD_LIBRARY_PATH=/usr/lib/wsl/lib`; see Task 11 for diagnosis. CUDA sanitizer
+validation remains unavailable with the installed tool. Earlier CUDA-exclusion
+statements describe the superseded CPU stage.
 
 ## Coordination
 

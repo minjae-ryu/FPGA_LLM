@@ -89,10 +89,10 @@ static int command_logits(int argc,char **argv) {
         if (!trace.binary || !trace.index || fwrite("SMTRC001",1,8,trace.binary)!=8) {
             sm_error(&run.error,"cannot open trace outputs");goto done;
         }
-        sm_session_set_trace(run.session,write_trace,&trace);
+        if(sm_run_set_trace(&run,write_trace,&trace)) goto done;
     }
     double start=sm_time();
-    if (sm_prefill(run.session,tokens,n,SM_LOGITS_ALL,compare_row,&c,&run.error)) goto done;
+    if (sm_run_prefill(&run,tokens,n,SM_LOGITS_ALL,compare_row,&c,&run.error)) goto done;
     double seconds=sm_time()-start;
     if (trace.failed || (c.reference && (fgetc(c.reference)!=EOF || ferror(c.reference)))) {
         sm_error(&run.error,"trace write failure or excess reference data");goto done;
@@ -101,7 +101,7 @@ static int command_logits(int argc,char **argv) {
     printf("{");sm_run_metadata(stdout,&run);printf(",\"command\":\"logits\",");comparison_json(&c,reference!=NULL);
     printf(",\"seconds\":%.9g,\"load_seconds\":%.9g,\"kv_bytes\":%zu,\"scratch_bytes\":%zu,"
            "\"peak_rss_kib\":%ld,\"trace_records\":%zu,\"parity_pass\":%s}\n",seconds,run.load_seconds,
-           sm_session_kv_bytes(run.session),sm_session_scratch_bytes(run.session),sm_peak_rss_kib(),trace.records,
+           sm_run_kv_bytes(&run),sm_run_scratch_bytes(&run),sm_peak_rss_kib(),trace.records,
            reference ? (passed ? "true":"false"):"null");
     status=reference && !sm_flag(argc,argv,"--report-only") && !passed ? 2:0;
 done:
@@ -121,22 +121,21 @@ static int command_chunks(int argc,char **argv) {
     reference=malloc(n*vocab*4);if(!reference) {sm_error(&run.error,"reference allocation failed");goto done;}
     size_t chunks[]={1,127,128,129};
     for (size_t i=0;i<4;i++) {
-        sm_session_free(run.session);run.session=NULL;
         size_t chunk=chunks[i];if(chunk>run.context) continue;
-        if(sm_session_create(run.model,run.kv,run.context,chunk,&run.session,&run.error)) goto done;
+        if(sm_run_create_session(&run,chunk)) goto done;
         Comparison c={0};c.tokens=tokens;c.count=n;
         if(i==0)c.memory_output=reference;else c.memory_reference=reference;
-        if(sm_prefill(run.session,tokens,n,SM_LOGITS_ALL,compare_row,&c,&run.error)) goto done;
+        if(sm_run_prefill(&run,tokens,n,SM_LOGITS_ALL,compare_row,&c,&run.error)) goto done;
         printf("{\"command\":\"chunks\",\"chunk\":%zu,",chunk);comparison_json(&c,i!=0);printf("}\n");
         if(i && !sm_flag(argc,argv,"--report-only") &&
            (c.failed || (n>1 && fabs(c.nll-c.reference_nll)/(n-1)>1e-4))) {status=2;goto done;}
         /* Reset and mixed call boundaries check independently of configured chunk. */
-        sm_session_reset(run.session);
+        if(sm_run_reset(&run)) goto done;
         c=(Comparison){0};c.tokens=tokens;c.count=n;c.memory_reference=reference;
         size_t boundaries[]={1,17,127,3,129};size_t at=0,part=0;
         while(at<n) {
             size_t count=boundaries[part++%5];if(count>n-at)count=n-at;
-            if(sm_prefill(run.session,tokens+at,count,SM_LOGITS_ALL,compare_row,&c,&run.error))goto done;
+            if(sm_run_prefill(&run,tokens+at,count,SM_LOGITS_ALL,compare_row,&c,&run.error))goto done;
             at+=count;
         }
         printf("{\"command\":\"mixed_reset\",\"chunk\":%zu,",chunk);comparison_json(&c,1);printf("}\n");
@@ -155,7 +154,7 @@ static int command_inspect(int argc,char **argv) {
     printf(",\"dim\":%u,\"hidden\":%u,\"layers\":%u,\"heads\":%u,\"kv_heads\":%u,\"head_dim\":%u,"
            "\"vocab\":%u,\"model_bytes\":%zu,\"kv_bytes\":%zu,\"scratch_bytes\":%zu,\"load_seconds\":%.9g}\n",
            c->dim,c->hidden,c->layers,c->heads,c->kv_heads,c->head_dim,c->vocab,sm_model_bytes(r.model),
-           sm_session_kv_bytes(r.session),sm_session_scratch_bytes(r.session),r.load_seconds);
+           sm_run_kv_bytes(&r),sm_run_scratch_bytes(&r),r.load_seconds);
     sm_run_close(&r);return 0;
 }
 int main(int argc,char **argv) {
